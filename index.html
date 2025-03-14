@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>電波人間用ランダムQRコード生成サイト</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            box-sizing: border-box;
+            gap: 20px;
+            height: 100vh;
+        }
+        .table-container {
+            width: 28%;
+            overflow-y: auto;
+            margin: 0;
+            padding-right: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 4px; /* 余白を減らす */
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        td {
+            word-wrap: break-word;
+            max-width: 120px;
+        }
+        .qr-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto;
+            width: 35%;
+        }
+        .qr-code {
+            width: 150px;
+            height: 150px;
+            margin-top: 20px;
+        }
+        .qr-message {
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #333;
+        }
+        .history {
+            width: 30%;
+            max-width: 400px;
+            position: relative;
+            padding: 10px;
+            box-sizing: border-box;
+            margin: 0;
+        }
+        .history p {
+            font-weight: bold;
+        }
+        .history ul {
+            list-style-type: none;
+            padding: 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .history li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .history img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        /* ダイアログボックス */
+        .dialog-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #f0f8ff; /* 薄い色に変更 */
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            z-index: 100;
+            max-width: 300px; /* ダイアログの幅を調整 */
+            width: 100%;
+        }
+
+        .dialog-container input {
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .dialog-container button {
+            padding: 10px;
+            width: 48%;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 2%;
+        }
+
+        .dialog-container button:hover {
+            background-color: #45a049;
+        }
+
+        .dialog-container .cancel-btn {
+            background-color: #f44336;
+        }
+
+        .dialog-container .cancel-btn:hover {
+            background-color: #e53935;
+        }
+
+        /* 文字サイズ調整 */
+        .title-large {
+            font-size: 30px; /* 新しい大きさに調整 */
+            font-weight: bold;
+        }
+
+        .title-medium {
+            font-size: 22px; /* 中くらいのタイトル */
+            font-weight: bold;
+        }
+
+        .title-small {
+            font-size: 14px; /* 小さな文字 */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="table-container">
+        <h2 class="title-medium">体格表（回避0のみ）</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>アンテナ</th>
+                    <th>最大</th>
+                    <th>最速</th>
+                    <th>備考</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>アン無</td><td>40</td><td>29</td><td></td></tr>
+                <tr><td>単体攻撃</td><td>33</td><td>24</td><td>火水:HP+1<br>風光:回避+1</td></tr>
+                <tr><td>3体攻撃</td><td>35</td><td>26</td><td>火水:HP+1<br>風光:回避+1</td></tr>
+                <tr><td>ノクダ</td><td>38</td><td>28</td><td>回避+1</td></tr>
+                <tr><td>単体回復</td><td>41</td><td>31</td><td></td></tr>
+                <tr><td>単体復活</td><td>42</td><td>32</td><td></td></tr>
+                <tr><td>解毒</td><td>42</td><td>32</td><td></td></tr>
+                <tr><td>痺れとる</td><td>43</td><td>33</td><td></td></tr>
+                <tr><td>目覚める</td><td>43</td><td>33</td><td></td></tr>
+                <tr><td>属性治す</td><td>42</td><td>32</td><td></td></tr>
+                <tr><td>全部治す</td><td>42</td><td>32</td><td></td></tr>
+                <tr><td>無敵</td><td>42</td><td>32</td><td></td></tr>
+                <tr><td>興奮</td><td>37</td><td>27</td><td></td></tr>
+                <tr><td>蓄える</td><td>42</td><td>32</td><td></td></tr>
+                <tr><td>単体増強</td><td>36</td><td>27</td><td>かわしやすい<br>:回避+2</td></tr>
+                <tr><td>弱体系</td><td>37</td><td>27</td><td>皆かわしにくい<br>:回避+4</td></tr>
+                <tr><td>足元ガード</td><td>35</td><td>25</td><td>回避+1</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="qr-container">
+        <div class="qr-message">
+            <p class="title-large">電波人間用QRコード生成サイト</p>
+            <p class="title-small">32桁のランダムな文字列をQRコードにします</p>
+            <p class="title-small">EnterかSpaceを押して再生成</p>
+            <p class="title-small">Sを押して画像を保存</p>
+            <p class="title-small">右の履歴をクリックで再表示可能</p>
+        </div>
+        <canvas id="qr-code-canvas" class="qr-code"></canvas>
+        <p id="qr-text"></p>
+    </div>
+
+    <div class="history">
+        <p class="title-medium">履歴:</p>
+        <ul id="history-list">
+            <!-- 履歴データ -->
+        </ul>
+    </div>
+
+    <!-- 保存用ファイル名入力ダイアログ -->
+    <div id="dialog" class="dialog-container">
+        <p class="title-medium">ファイル名を入力</p>
+        <p class="title-small">＊拡張子は不要です。</p>
+        <p class="title-small">ファイル名を入力しない場合はそのままENTERを押してください。</p>
+        <input type="text" id="filename-input" placeholder="ファイル名を入力">
+        <div style="display: flex; gap: 2%;">
+            <button id="save-btn">完了</button>
+            <button id="cancel-btn" class="cancel-btn">キャンセル</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <script>
+        const historyList = document.getElementById('history-list');
+        const qrCanvas = document.getElementById('qr-code-canvas');
+        const qrTextDisplay = document.getElementById('qr-text');
+        const qrSize = 150;
+        qrCanvas.width = qrSize;
+        qrCanvas.height = qrSize;
+
+        const dialog = document.getElementById('dialog');
+        const filenameInput = document.getElementById('filename-input');
+        const saveBtn = document.getElementById('save-btn');
+        const cancelBtn = document.getElementById('cancel-btn');
+
+        let currentQRData = ''; // 現在表示されているQRコードのデータ
+        let isDialogVisible = false; // ダイアログが表示されているかを追跡
+
+        function generateRandomString(length) {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        }
+
+        function generateQRCode() {
+            const ctx = qrCanvas.getContext('2d');
+            ctx.clearRect(0, 0, qrCanvas.width, qrCanvas.height);
+            const qrCodeText = generateRandomString(32);
+            QRCode.toCanvas(qrCanvas, qrCodeText, function (error) {
+                if (error) console.error(error);
+                qrTextDisplay.textContent = qrCodeText;  // QRコード下に文字列を表示
+                currentQRData = qrCodeText;  // 現在のQRコードデータを保持
+                addToHistory(qrCanvas.toDataURL(), qrCodeText);  // 新しい履歴を上に追加
+            });
+        }
+
+        function addToHistory(qrData, qrString) {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `<img src="${qrData}" class="qr-code"> <br> ${qrString}`;
+            listItem.addEventListener('click', () => {
+                qrTextDisplay.textContent = qrString;
+                const ctx = qrCanvas.getContext('2d');
+                ctx.clearRect(0, 0, qrCanvas.width, qrCanvas.height);
+                QRCode.toCanvas(qrCanvas, qrString);
+            });
+            historyList.insertBefore(listItem, historyList.firstChild);
+        }
+
+        function showSaveDialog() {
+            filenameInput.value = '';  // 入力欄を空にして表示
+            setTimeout(() => {
+                dialog.style.display = 'block';
+                filenameInput.focus();  // 0.1秒後にすぐに入力できる状態にする
+                isDialogVisible = true; // ダイアログ表示フラグを設定
+            }, 100);  // 0.1秒の遅延
+        }
+
+        function hideSaveDialog() {
+            dialog.style.display = 'none';
+            isDialogVisible = false; // ダイアログ非表示フラグを設定
+        }
+
+        saveBtn.addEventListener('click', function () {
+            const fileName = filenameInput.value.trim() || currentQRData; // 入力がない場合は現在のQRコードデータをファイル名にする
+            const dataURL = qrCanvas.toDataURL();
+            const a = document.createElement('a');
+            a.href = dataURL;
+            a.download = fileName + '.png';
+            a.click();
+            hideSaveDialog();
+        });
+
+        cancelBtn.addEventListener('click', function () {
+            hideSaveDialog();
+        });
+
+        window.addEventListener('keydown', function (e) {
+            if (isDialogVisible && e.key === 'Enter') {
+                saveBtn.click();  // ダイアログ表示中にEnterで保存
+            } else if (e.key === 'Enter
