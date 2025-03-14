@@ -86,8 +86,6 @@
             height: 40px;
             margin-right: 10px;
         }
-
-        /* ダイアログボックス */
         .dialog-container {
             display: none;
             position: fixed;
@@ -102,14 +100,12 @@
             max-width: 300px; /* ダイアログの幅を調整 */
             width: 100%;
         }
-
         .dialog-container input {
             padding: 10px;
             margin-bottom: 10px;
             width: 100%;
             box-sizing: border-box;
         }
-
         .dialog-container button {
             padding: 10px;
             width: 48%;
@@ -120,30 +116,23 @@
             cursor: pointer;
             margin-right: 2%;
         }
-
         .dialog-container button:hover {
             background-color: #45a049;
         }
-
         .dialog-container .cancel-btn {
             background-color: #f44336;
         }
-
         .dialog-container .cancel-btn:hover {
             background-color: #e53935;
         }
-
-        /* 文字サイズ調整 */
         .title-large {
             font-size: 30px; /* 新しい大きさに調整 */
             font-weight: bold;
         }
-
         .title-medium {
             font-size: 22px; /* 中くらいのタイトル */
             font-weight: bold;
         }
-
         .title-small {
             font-size: 14px; /* 小さな文字 */
         }
@@ -168,17 +157,10 @@
                 <tr><td>3体攻撃</td><td>35</td><td>26</td><td>火水:HP+1<br>風光:回避+1</td></tr>
                 <tr><td>ノクダ</td><td>38</td><td>28</td><td>回避+1</td></tr>
                 <tr><td>単体回復</td><td>41</td><td>31</td><td></td></tr>
-                <tr><td>単体復活</td><td>42</td><td>32</td><td></td></tr>
-                <tr><td>解毒</td><td>42</td><td>32</td><td></td></tr>
-                <tr><td>痺れとる</td><td>43</td><td>33</td><td></td></tr>
-                <tr><td>目覚める</td><td>43</td><td>33</td><td></td></tr>
-                <tr><td>属性治す</td><td>42</td><td>32</td><td></td></tr>
-                <tr><td>全部治す</td><td>42</td><td>32</td><td></td></tr>
-                <tr><td>無敵</td><td>42</td><td>32</td><td></td></tr>
-                <tr><td>興奮</td><td>37</td><td>27</td><td></td></tr>
-                <tr><td>蓄える</td><td>42</td><td>32</td><td></td></tr>
+                <tr><td>痺れとる<br>目覚める</td><td>43</td><td>33</td><td></td></tr>
+                <tr><td>解毒<br>属性治す<br>全部治す<br>単体復活<br>無敵<br>蓄える</td><td>42</td><td>32</td><td></td></tr>
                 <tr><td>単体増強</td><td>36</td><td>27</td><td>かわしやすい<br>:回避+2</td></tr>
-                <tr><td>弱体系</td><td>37</td><td>27</td><td>皆かわしにくい<br>:回避+4</td></tr>
+                <tr><td>興奮<br>弱体系</td><td>37</td><td>27</td><td>皆かわしにくい<br>:回避+4</td></tr>
                 <tr><td>足元ガード</td><td>35</td><td>25</td><td>回避+1</td></tr>
             </tbody>
         </table>
@@ -187,9 +169,7 @@
     <div class="qr-container">
         <div class="qr-message">
             <p class="title-large">電波人間用QRコード生成サイト</p>
-            <p class="title-small">32桁のランダムな文字列をQRコードにします</p>
-            <p class="title-small">EnterかSpaceを押して再生成</p>
-            <p class="title-small">Sを押して画像を保存</p>
+            <p class="title-small">Enter/Spaceで「再生成」、Sで「保存」</p>
             <p class="title-small">右の履歴をクリックで再表示可能</p>
         </div>
         <canvas id="qr-code-canvas" class="qr-code"></canvas>
@@ -206,8 +186,7 @@
     <!-- 保存用ファイル名入力ダイアログ -->
     <div id="dialog" class="dialog-container">
         <p class="title-medium">ファイル名を入力</p>
-        <p class="title-small">＊拡張子は不要です。</p>
-        <p class="title-small">ファイル名を入力しない場合はそのままENTERを押してください。</p>
+        <p class="title-small">*拡張子は不要です。<br>ファイル名を入力しない場合はそのままENTERを押してください。</p>
         <input type="text" id="filename-input" placeholder="ファイル名を入力">
         <div style="display: flex; gap: 2%;">
             <button id="save-btn">完了</button>
@@ -296,4 +275,16 @@
         window.addEventListener('keydown', function (e) {
             if (isDialogVisible && e.key === 'Enter') {
                 saveBtn.click();  // ダイアログ表示中にEnterで保存
-            } else if (e.key === 'Enter
+            } else if (e.key === 'Enter') {
+                generateQRCode();  // QRコードの再生成
+            } else if (e.key === ' ') {
+                generateQRCode();  // スペースキーでQRコード再生成
+            } else if (e.key === 'S' || e.key === 's') {
+                showSaveDialog();  // Sキーで保存ダイアログ
+            }
+        });
+
+        generateQRCode();
+    </script>
+</body>
+</html>
