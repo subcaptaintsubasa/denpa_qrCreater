@@ -13,7 +13,7 @@
 
 ### その他
 - 体格表は、[https://kokorogu.com/new-denpa-11](https://kokorogu.com/new-denpa-11) を参考にしています。
-- 今回、ツールの作成にあたり、みずろく様（@mizu6g）の公開しているWebサイト[https://yukine8.github.io/denpa-qr-generator](https://yukine8.github.io/denpa-qr-generator)を参考にさせて頂いております。本人様からの許可により、MITライセンスを保持する事を条件に改修及び機能の追加を行っております。
+- 今回、ツールの作成にあたり、みずろく様（[@mizu6g](https://x.com/mizu6g)）の公開しているWebサイト[https://yukine8.github.io/denpa-qr-generator](https://yukine8.github.io/denpa-qr-generator)を参考にさせて頂いております。本人様からの許可により、MITライセンスを保持する事を条件に改修及び機能の追加を行っております。
 -   QRコードは、X（Twitter）やDiscordで自由にシェアして下さい。
 -   ＊サイトの利用の際は、商用利用しないこと（QRコードの販売等）と無断転載しないことを遵守して下さい。
 -   Youtubeで紹介する際や、まとめサイト等のWebサイトに載せる場合、コードを編集するなどして新たにサイトを作成する場合等は相談頂ければ許可します。
