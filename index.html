@@ -16,10 +16,16 @@
             height: 100vh;
             flex-wrap: wrap;
         }
+        /* PC用体格表：スマホ時は非表示 */
         .table-container {
             width: 100%;
             max-width: 400px;
             margin: 20px 0;
+        }
+        @media (max-width: 768px) {
+            .table-container {
+                display: none;
+            }
         }
         table {
             width: 100%;
@@ -171,7 +177,7 @@
         .button-container {
             display: none;
         }
-        /* オーバーレイ */
+        /* オーバーレイ（ダイアログ表示時に背景ロック） */
         #overlay {
             display: none;
             position: fixed;
@@ -181,21 +187,28 @@
             background: rgba(0,0,0,0.3);
             z-index: 100;
         }
-        /* モバイル用のスタイル */
+        /* スマホ（縦画面）時の調整 */
         @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-            .table-container, .history {
-                width: 100%;
-                margin: 0;
-            }
             .qr-container {
-                width: 80%;
+                width: 100%;
+            }
+            #qr-code-canvas {
+                width: 100% !important;
+                height: auto;
             }
             .button-container {
+                display: flex;
+                justify-content: space-around;
+                margin-top: 10px;
+            }
+            /* 「体格表」ボタン：スマホ時のみ表示 */
+            .mobile-only {
                 display: block;
-                margin-top: 20px;
+                margin-top: 10px;
+            }
+            /* セレクトグループと説明文は下部に表示 */
+            .selectGroup, .explanation + .explanation {
+                margin-top: 10px;
             }
         }
     </style>
@@ -203,7 +216,8 @@
 <body>
     <!-- オーバーレイ -->
     <div id="overlay"></div>
-    
+
+    <!-- PC用体格表（スマホでは非表示） -->
     <div class="table-container">
         <h2 class="title-medium">体格表（回避0のみ）</h2>
         <table>
@@ -245,6 +259,15 @@
         <!-- 追加説明文（上段） -->
         <div class="explanation">
             <p class="mid">電波人間の情報を保存画像に追加（任意）</p>
+        </div>
+        <!-- ボタン群（再生成・保存） -->
+        <div class="button-container">
+            <button id="regenerate-btn">再生成</button>
+            <button id="save-btn-mobile">保存</button>
+        </div>
+        <!-- 「体格表」ボタン：スマホ時のみ表示 -->
+        <div class="mobile-only">
+            <button id="tableBtn">体格表</button>
         </div>
         <!-- セレクトグループ（入力欄の代替） -->
         <div class="selectGroup">
@@ -381,13 +404,9 @@
                 <input type="text" id="featureOtherInput" class="feature-other" placeholder="その他の特徴を入力">
             </div>
         </div>
-        <!-- 小さい説明文をセレクトグループの下に移動 -->
+        <!-- 小さい説明文（セレクトグループの下） -->
         <div class="explanation">
             <p class="small">＊選択した情報がQRコードの上に出力されます。</p>
-        </div>
-        <div class="button-container">
-            <button id="regenerate-btn">QRコードの再生成</button>
-            <button id="save-btn-mobile">QRコードの保存</button>
         </div>
     </div>
 
@@ -398,7 +417,7 @@
         </ul>
     </div>
 
-    <!-- 保存用ファイル名入力ダイアログ -->
+    <!-- 保存用ファイル名入力ダイアログ（PC用） -->
     <div id="dialog" class="dialog-container">
         <p class="title-medium">ファイル名を入力</p>
         <p class="title-small">*拡張子は不要です。<br>ファイル名を入力しない場合はそのままENTERを押してください。</p>
@@ -407,6 +426,42 @@
             <button id="save-btn">完了</button>
             <button id="cancel-btn" class="cancel-btn">キャンセル</button>
         </div>
+    </div>
+
+    <!-- 体格表ダイアログ（スマホ用） -->
+    <div id="tableDialog" class="dialog-container" style="max-width:100%; width:100%; height:100%; display:none;">
+        <div style="overflow:auto; height:80vh;">
+            <div class="table-container" style="display:block;">
+                <h2 class="title-medium">体格表（回避0のみ）</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>アンテナ</th>
+                            <th>最大</th>
+                            <th>最速</th>
+                            <th>備考</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>アン無</td><td>40</td><td>29</td><td></td></tr>
+                        <tr><td>単体攻撃</td><td>33</td><td>24</td><td>火水:HP+1<br>風光:回避+1</td></tr>
+                        <tr><td>3体攻撃</td><td>35</td><td>26</td><td>火水:HP+1<br>風光:回避+1</td></tr>
+                        <tr><td>ノクダ</td><td>38</td><td>28</td><td>回避+1</td></tr>
+                        <tr><td>単体回復</td><td>41</td><td>31</td><td></td></tr>
+                        <tr><td>単体復活</td><td>42</td><td>32</td><td></td></tr>
+                        <tr><td>痺れとる<br>目覚める</td><td>43</td><td>33</td><td></td></tr>
+                        <tr><td>解毒<br>属性治す<br>全部治す</td><td>42</td><td>32</td><td></td></tr>
+                        <tr><td>単体増強</td><td>36</td><td>27</td><td>かわしやすい<br>:回避+2</td></tr>
+                        <tr><td>蓄える</td><td>42</td><td>32</td><td></td></tr>
+                        <tr><td>興奮</td><td>37</td><td>27</td><td></td></tr>
+                        <tr><td>弱体系</td><td>37</td><td>27</td><td>皆かわしにくい<br>:回避+4</td></tr>
+                        <tr><td>無敵</td><td>42</td><td>32</td><td></td></tr>
+                        <tr><td>足元ガード</td><td>35</td><td>25</td><td>回避+1</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <button id="closeTableBtn">閉じる</button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
@@ -431,6 +486,9 @@
         const featureSelect = document.getElementById('featureSelect');
         const featureOtherInput = document.getElementById('featureOtherInput');
         const overlay = document.getElementById('overlay');
+        const tableBtn = document.getElementById('tableBtn');
+        const tableDialog = document.getElementById('tableDialog');
+        const closeTableBtn = document.getElementById('closeTableBtn');
 
         let isDialogVisible = false;
 
@@ -474,7 +532,6 @@
                 QRCode.toCanvas(qrCanvas, qrCodeText, function (error) {
                     if (error) console.error(error);
                 });
-                // 履歴の生成番号から数値部分を取り出して表示
                 const num = qrString.replace('生成No.', '');
                 qrTextDisplay.textContent = `生成回数：${num}`;
             });
@@ -482,14 +539,18 @@
         }
 
         function showSaveDialog() {
-            filenameInput.value = '';
-            // オーバーレイ表示
-            overlay.style.display = 'block';
-            setTimeout(() => {
-                dialog.style.display = 'block';
-                filenameInput.focus();
-                isDialogVisible = true;
-            }, 100);
+            // スマホ時は直接保存
+            if (window.innerWidth <= 768) {
+                saveQRCode();
+            } else {
+                filenameInput.value = '';
+                overlay.style.display = 'block';
+                setTimeout(() => {
+                    dialog.style.display = 'block';
+                    filenameInput.focus();
+                    isDialogVisible = true;
+                }, 100);
+            }
         }
 
         function hideSaveDialog() {
@@ -498,12 +559,21 @@
             isDialogVisible = false;
         }
 
-        // テキストを指定の条件で改行する関数（文字数許容量を12字に変更）
+        function showTableDialog() {
+            overlay.style.display = 'block';
+            tableDialog.style.display = 'block';
+        }
+
+        function hideTableDialog() {
+            tableDialog.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        // テキストを指定の条件で改行する関数（許容量12字）
         function wrapText(text, maxChars = 12) {
             let lines = [];
             while (text.length > maxChars) {
                 let breakPos = -1;
-                // 検索範囲：maxChars-3 ～ maxChars+3（インデックスは0始まり）
                 let searchStart = Math.max(0, maxChars - 3);
                 let searchEnd = Math.min(text.length, maxChars + 3);
                 for (let i = searchEnd - 1; i >= searchStart; i--) {
@@ -523,7 +593,6 @@
         }
 
         function saveQRCode() {
-            // 各セレクトボックスの値を取得し、空でないものを連結
             const avoidance = document.getElementById('avoidanceSelect').value;
             const physique = document.getElementById('physiqueSelect').value;
             const color = document.getElementById('colorSelect').value;
@@ -542,12 +611,11 @@
             if(feature) parts.push(feature);
             const text = parts.join(" ");
             
-            // 改行処理（許容量12字）
             let wrappedLines = [];
             if (text) {
                 wrappedLines = wrapText(text, 12);
             }
-            const lineHeight = 30; // 各行の高さ
+            const lineHeight = 30;
             const textAreaHeight = wrappedLines.length * lineHeight;
             const combinedCanvas = document.createElement('canvas');
             combinedCanvas.width = qrCanvas.width;
@@ -555,10 +623,8 @@
             const combinedCtx = combinedCanvas.getContext('2d');
 
             if (text) {
-                // 上部に白背景を描画
                 combinedCtx.fillStyle = 'white';
                 combinedCtx.fillRect(0, 0, combinedCanvas.width, textAreaHeight);
-                // テキストを各行ごとに中央揃え・太字で描画
                 combinedCtx.fillStyle = 'black';
                 combinedCtx.font = 'bold 16px Arial';
                 combinedCtx.textAlign = 'center';
@@ -567,11 +633,11 @@
                     combinedCtx.fillText(wrappedLines[i], combinedCanvas.width / 2, lineHeight / 2 + i * lineHeight);
                 }
             }
-            // QRコード画像をテキストの下に描画
             combinedCtx.drawImage(qrCanvas, 0, textAreaHeight);
 
             const dataURL = combinedCanvas.toDataURL();
-            const fileName = filenameInput.value.trim() || currentQRData;
+            // スマホ時は直接保存
+            const fileName = window.innerWidth <= 768 ? currentQRData : (filenameInput.value.trim() || currentQRData);
             const a = document.createElement('a');
             a.href = dataURL;
             a.download = fileName + '.png';
@@ -584,8 +650,10 @@
         regenerateBtn.addEventListener('click', generateQRCode);
         saveBtnMobile.addEventListener('click', showSaveDialog);
 
+        tableBtn.addEventListener('click', showTableDialog);
+        closeTableBtn.addEventListener('click', hideTableDialog);
+
         window.addEventListener('keydown', function (e) {
-            // 入力欄またはセレクト要素がフォーカスされている場合はキー操作を無効化
             const activeTag = document.activeElement.tagName;
             if (activeTag === 'INPUT' || activeTag === 'SELECT') {
                 return;
