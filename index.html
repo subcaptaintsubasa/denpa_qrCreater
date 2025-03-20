@@ -16,16 +16,10 @@
       height: 100vh;
       flex-wrap: wrap;
     }
-    /* PC用体格表：スマホ時は非表示 */
     .table-container {
       width: 100%;
       max-width: 400px;
       margin: 20px 0;
-    }
-    @media (max-width: 768px) {
-      .table-container {
-        display: none;
-      }
     }
     table {
       width: 100%;
@@ -47,61 +41,21 @@
     .qr-container {
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
       text-align: center;
       max-width: 500px;
       margin: 0 auto;
       width: 35%;
-      position: relative;
     }
-    /* 共通のQRコードコンテナ：PCでは固定サイズ、スマホでは横幅いっぱいに */
-    .qr-code-container {
-      margin: 0 auto;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    /* PC時は固定サイズ */
-    @media (min-width: 769px) {
-      .qr-code-container {
-        width: 150px;
-        height: 150px;
-        margin-bottom: 20px; /* PC用追加余白 */
-      }
-    }
-    /* スマホ時は横幅いっぱい、かつ正方形を維持 */
-    @media (max-width: 768px) {
-      .qr-code-container {
-        width: 100%;
-        aspect-ratio: 1;
-      }
-    }
-    /* キャンバスはコンテナ内で中央に表示 */
-    #qr-code-canvas {
-      display: block;
-      /* PC用はサイズそのまま */
+    /* デフォルトはPCサイズ用 */
+    canvas.qr-code {
       width: 150px;
       height: 150px;
-    }
-    @media (max-width: 768px) {
-      #qr-code-canvas {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-      }
     }
     .qr-message {
       margin-bottom: 10px;
       font-size: 16px;
       color: #333;
-    }
-    /* 生成回数の表示 */
-    #qr-text {
-      margin: 20px 0 0 0; /* PC用: 下部余白を調整 */
     }
     .explanation {
       margin: 10px 0;
@@ -138,7 +92,6 @@
     .history {
       width: 100%;
       max-width: 400px;
-      position: relative;
       padding: 10px;
       box-sizing: border-box;
       margin: 20px 0;
@@ -152,19 +105,27 @@
       max-height: 400px;
       overflow-y: auto;
     }
-    /* 履歴リストの各項目を横並びに */
     .history li {
       display: flex;
       align-items: center;
       margin-bottom: 10px;
       cursor: pointer;
     }
-    .history li img {
+    .history img {
+      width: 40px;
+      height: 40px;
       margin-right: 10px;
     }
-    .history li span {
-      display: inline-block;
+    .button-container {
+      margin-top: 10px;
     }
+    .button-container button {
+      padding: 10px 15px;
+      font-size: 16px;
+      margin: 5px;
+      cursor: pointer;
+    }
+    /* ダイアログ（保存用および体格表用） */
     .dialog-container {
       display: none;
       position: fixed;
@@ -178,6 +139,7 @@
       z-index: 101;
       max-width: 300px;
       width: 100%;
+      text-align: center;
     }
     .dialog-container input {
       padding: 10px;
@@ -215,10 +177,7 @@
     .title-small {
       font-size: 14px;
     }
-    .button-container {
-      display: none;
-    }
-    /* オーバーレイ（ダイアログ表示時に背景ロック） */
+    /* オーバーレイ */
     #overlay {
       display: none;
       position: fixed;
@@ -228,56 +187,30 @@
       background: rgba(0,0,0,0.3);
       z-index: 100;
     }
-    /* 体格表ダイアログ（スマホ用）：中央寄せ、余白追加 */
-    #tableDialog {
-      max-width: 100%;
-      width: 100%;
-      height: 100%;
-      display: none;
-      text-align: center;
-      padding-top: 20px;
-    }
-    #tableDialog .table-container {
-      margin: 20px auto;
-      text-align: center;
-    }
-    #tableDialog h2, 
-    #tableDialog table,
-    #closeTableBtn {
-      margin: 10px auto;
-    }
-    /* スマホ（縦画面）時の調整 */
+    /* スマホ（縦画面）用 */
     @media (max-width: 768px) {
-      .qr-container {
-        width: 100%;
+      /* 非表示にする体格表（通常表示の） */
+      .table-container {
+        display: none;
       }
-      .button-row {
+      .qr-container {
+        width: 80%;
+      }
+      /* 拡大したQRコード */
+      canvas.qr-code {
+        width: 225px;
+        height: 225px;
+      }
+      /* ボタン行：横並びに3つ配置 */
+      .button-container {
         display: flex;
         justify-content: space-around;
-        align-items: center;
         width: 100%;
-        margin-bottom: 10px;
       }
-      .button-row button {
-        flex: 1;
-        margin: 0 5px;
-        font-size: 18px;
-        padding: 15px;
-      }
-      /* 既存の説明文（中サイズ）はQRコードの下に配置 */
-      .qr-container > .explanation.mid {
-        order: 3;
-      }
-      /* セレクトグループと下段の説明文は下部に配置 */
-      .qr-container > .selectGroup,
-      .qr-container > .explanation.small {
-        order: 4;
-      }
-    }
-    /* パソコン時は「体格表」ボタンを非表示 */
-    @media (min-width: 769px) {
-      .mobile-only {
-        display: none;
+      /* セレクトグループと説明文を下に移動 */
+      .selectGroup,
+      .explanation {
+        width: 100%;
       }
     }
   </style>
@@ -285,8 +218,8 @@
 <body>
   <!-- オーバーレイ -->
   <div id="overlay"></div>
-
-  <!-- PC用体格表（スマホでは非表示） -->
+  
+  <!-- 体格表（PC表示用） -->
   <div class="table-container">
     <h2 class="title-medium">体格表（回避0のみ）</h2>
     <table>
@@ -323,27 +256,18 @@
       <p class="title-small">Enter/Spaceで「再生成」、Sで「保存」</p>
       <p class="title-small">右の履歴をクリックで再表示可能</p>
     </div>
-    <!-- QRコードを囲むコンテナ -->
-    <div class="qr-code-container">
-      <canvas id="qr-code-canvas" class="qr-code"></canvas>
-    </div>
+    <canvas id="qr-code-canvas" class="qr-code"></canvas>
     <p id="qr-text">生成回数：1</p>
-    <!-- スマホ用ボタン行（体格表、再生成、保存）：上部に配置 -->
-    <div class="button-row mobile-only">
-      <button id="tableBtn">体格表</button>
+    <!-- ボタン行（スマホ時は3つボタン横並び、PCでは表示されない） -->
+    <div class="button-container">
       <button id="regenerate-btn">再生成</button>
       <button id="save-btn-mobile">保存</button>
+      <button id="table-btn" style="display:none;">体格表</button>
     </div>
-    <!-- 既存のPC用ボタン群（非表示） -->
-    <div class="button-container">
-      <button id="regenerate-btn">QRコードの再生成</button>
-      <button id="save-btn-mobile">QRコードの保存</button>
+    <!-- セレクトグループおよび説明文（PC：そのまま表示、スマホ：下部へ移動） -->
+    <div class="explanation">
+      <p class="mid">電波人間の情報を保存画像に追加（任意）</p>
     </div>
-    <!-- 既存の説明文（中サイズ） -->
-    <div class="explanation mid">
-      <p>電波人間の情報を保存画像に追加（任意）</p>
-    </div>
-    <!-- セレクトグループ -->
     <div class="selectGroup">
       <div>
         <strong>回避率</strong>
@@ -478,9 +402,9 @@
         <input type="text" id="featureOtherInput" class="feature-other" placeholder="その他の特徴を入力">
       </div>
     </div>
-    <!-- 小さい説明文（セレクトグループの下） -->
-    <div class="explanation small">
-      <p>＊選択した情報がQRコードの上に出力されます。</p>
+    <!-- 小さい説明文をセレクトグループの下に配置 -->
+    <div class="explanation">
+      <p class="small">＊選択した情報がQRコードの上に出力されます。</p>
     </div>
   </div>
 
@@ -503,39 +427,35 @@
   </div>
 
   <!-- 体格表ダイアログ（スマホ用） -->
-  <div id="tableDialog" class="dialog-container" style="max-width:100%; width:100%; height:100%; display:none; text-align:center; padding-top:20px;">
-    <div style="overflow:auto; height:80vh;">
-      <div class="table-container" style="display:block; margin: 20px auto; text-align:center;">
-        <h2 class="title-medium" style="margin-bottom:20px;">体格表（回避0のみ）</h2>
-        <table style="margin: 0 auto;">
-          <thead>
-            <tr>
-              <th>アンテナ</th>
-              <th>最大</th>
-              <th>最速</th>
-              <th>備考</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>アン無</td><td>40</td><td>29</td><td></td></tr>
-            <tr><td>単体攻撃</td><td>33</td><td>24</td><td>火水:HP+1<br>風光:回避+1</td></tr>
-            <tr><td>3体攻撃</td><td>35</td><td>26</td><td>火水:HP+1<br>風光:回避+1</td></tr>
-            <tr><td>ノクダ</td><td>38</td><td>28</td><td>回避+1</td></tr>
-            <tr><td>単体回復</td><td>41</td><td>31</td><td></td></tr>
-            <tr><td>単体復活</td><td>42</td><td>32</td><td></td></tr>
-            <tr><td>痺れとる<br>目覚める</td><td>43</td><td>33</td><td></td></tr>
-            <tr><td>解毒<br>属性治す<br>全部治す</td><td>42</td><td>32</td><td></td></tr>
-            <tr><td>単体増強</td><td>36</td><td>27</td><td>かわしやすい<br>:回避+2</td></tr>
-            <tr><td>蓄える</td><td>42</td><td>32</td><td></td></tr>
-            <tr><td>興奮</td><td>37</td><td>27</td><td></td></tr>
-            <tr><td>弱体系</td><td>37</td><td>27</td><td>皆かわしにくい<br>:回避+4</td></tr>
-            <tr><td>無敵</td><td>42</td><td>32</td><td></td></tr>
-            <tr><td>足元ガード</td><td>35</td><td>25</td><td>回避+1</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <button id="closeTableBtn" style="display:block; margin:20px auto;">閉じる</button>
+  <div id="tableDialog" class="dialog-container">
+    <p class="title-medium">体格表（回避0のみ）</p>
+    <table>
+      <thead>
+        <tr>
+          <th>アンテナ</th>
+          <th>最大</th>
+          <th>最速</th>
+          <th>備考</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>アン無</td><td>40</td><td>29</td><td></td></tr>
+        <tr><td>単体攻撃</td><td>33</td><td>24</td><td>火水:HP+1<br>風光:回避+1</td></tr>
+        <tr><td>3体攻撃</td><td>35</td><td>26</td><td>火水:HP+1<br>風光:回避+1</td></tr>
+        <tr><td>ノクダ</td><td>38</td><td>28</td><td>回避+1</td></tr>
+        <tr><td>単体回復</td><td>41</td><td>31</td><td></td></tr>
+        <tr><td>単体復活</td><td>42</td><td>32</td><td></td></tr>
+        <tr><td>痺れとる<br>目覚める</td><td>43</td><td>33</td><td></td></tr>
+        <tr><td>解毒<br>属性治す<br>全部治す</td><td>42</td><td>32</td><td></td></tr>
+        <tr><td>単体増強</td><td>36</td><td>27</td><td>かわしやすい<br>:回避+2</td></tr>
+        <tr><td>蓄える</td><td>42</td><td>32</td><td></td></tr>
+        <tr><td>興奮</td><td>37</td><td>27</td><td></td></tr>
+        <tr><td>弱体系</td><td>37</td><td>27</td><td>皆かわしにくい<br>:回避+4</td></tr>
+        <tr><td>無敵</td><td>42</td><td>32</td><td></td></tr>
+        <tr><td>足元ガード</td><td>35</td><td>25</td><td>回避+1</td></tr>
+      </tbody>
+    </table>
+    <button id="closeTableBtn">閉じる</button>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
@@ -548,7 +468,6 @@
     let currentQRData = ''; // 現在表示されているQRコードのデータ
     let savedQRs = []; // 履歴用にQRコードの元データを保存
 
-    // 初期キャンバスサイズ（PC用）
     qrCanvas.width = qrSize;
     qrCanvas.height = qrSize;
 
@@ -558,12 +477,12 @@
     const cancelBtn = document.getElementById('cancel-btn');
     const regenerateBtn = document.getElementById('regenerate-btn');
     const saveBtnMobile = document.getElementById('save-btn-mobile');
+    const tableBtn = document.getElementById('table-btn');
+    const tableDialog = document.getElementById('tableDialog');
+    const closeTableBtn = document.getElementById('closeTableBtn');
     const featureSelect = document.getElementById('featureSelect');
     const featureOtherInput = document.getElementById('featureOtherInput');
     const overlay = document.getElementById('overlay');
-    const tableBtn = document.getElementById('tableBtn');
-    const tableDialog = document.getElementById('tableDialog');
-    const closeTableBtn = document.getElementById('closeTableBtn');
 
     let isDialogVisible = false;
 
@@ -601,11 +520,13 @@
     function addToHistory(qrData, qrString, qrCodeText) {
       savedQRs.push({ qrData, qrString, qrCodeText });
       const listItem = document.createElement('li');
-      listItem.innerHTML = `<img src="${qrData}" class="qr-code"><span>${qrString}</span>`;
+      listItem.innerHTML = `<img src="${qrData}" class="qr-code"> <br> ${qrString}`;
       listItem.addEventListener('click', () => {
+        // 過去のQRコードを保存されたデータで再表示
         QRCode.toCanvas(qrCanvas, qrCodeText, function (error) {
           if (error) console.error(error);
         });
+        // 履歴の生成番号から数値部分を取り出して表示
         const num = qrString.replace('生成No.', '');
         qrTextDisplay.textContent = `生成回数：${num}`;
       });
@@ -613,9 +534,8 @@
     }
 
     function showSaveDialog() {
-      if (window.innerWidth <= 768) {
-        saveQRCode();
-      } else {
+      // PCの場合のみファイル名入力ダイアログを表示
+      if (window.innerWidth >= 768) {
         filenameInput.value = '';
         overlay.style.display = 'block';
         setTimeout(() => {
@@ -623,6 +543,9 @@
           filenameInput.focus();
           isDialogVisible = true;
         }, 100);
+      } else {
+        // スマホの場合は直接保存
+        saveQRCode();
       }
     }
 
@@ -632,21 +555,22 @@
       isDialogVisible = false;
     }
 
+    // 体格表ダイアログ表示（スマホ用）
     function showTableDialog() {
       overlay.style.display = 'block';
       tableDialog.style.display = 'block';
     }
-
     function hideTableDialog() {
       tableDialog.style.display = 'none';
       overlay.style.display = 'none';
     }
 
-    // テキストを指定の条件で改行する関数（許容量12字）
+    // テキストを指定の条件で改行する関数（文字数許容量を12字に変更）
     function wrapText(text, maxChars = 12) {
       let lines = [];
       while (text.length > maxChars) {
         let breakPos = -1;
+        // 検索範囲：maxChars-3 ～ maxChars+3（インデックスは0始まり）
         let searchStart = Math.max(0, maxChars - 3);
         let searchEnd = Math.min(text.length, maxChars + 3);
         for (let i = searchEnd - 1; i >= searchStart; i--) {
@@ -666,6 +590,7 @@
     }
 
     function saveQRCode() {
+      // 各セレクトボックスの値を取得し、空でないものを連結
       const avoidance = document.getElementById('avoidanceSelect').value;
       const physique = document.getElementById('physiqueSelect').value;
       const color = document.getElementById('colorSelect').value;
@@ -684,11 +609,12 @@
       if(feature) parts.push(feature);
       const text = parts.join(" ");
       
+      // 改行処理（許容量12字）
       let wrappedLines = [];
       if (text) {
         wrappedLines = wrapText(text, 12);
       }
-      const lineHeight = 30;
+      const lineHeight = 30; // 各行の高さ
       const textAreaHeight = wrappedLines.length * lineHeight;
       const combinedCanvas = document.createElement('canvas');
       combinedCanvas.width = qrCanvas.width;
@@ -696,8 +622,10 @@
       const combinedCtx = combinedCanvas.getContext('2d');
 
       if (text) {
+        // 上部に白背景を描画
         combinedCtx.fillStyle = 'white';
         combinedCtx.fillRect(0, 0, combinedCanvas.width, textAreaHeight);
+        // テキストを各行ごとに中央揃え・太字で描画
         combinedCtx.fillStyle = 'black';
         combinedCtx.font = 'bold 16px Arial';
         combinedCtx.textAlign = 'center';
@@ -706,10 +634,12 @@
           combinedCtx.fillText(wrappedLines[i], combinedCanvas.width / 2, lineHeight / 2 + i * lineHeight);
         }
       }
+      // QRコード画像をテキストの下に描画
       combinedCtx.drawImage(qrCanvas, 0, textAreaHeight);
 
       const dataURL = combinedCanvas.toDataURL();
-      const fileName = window.innerWidth <= 768 ? currentQRData : (filenameInput.value.trim() || currentQRData);
+      // PCの場合はファイル名入力ダイアログから取得、スマホの場合は直接保存
+      const fileName = (window.innerWidth >= 768 ? (filenameInput.value.trim() || currentQRData) : currentQRData);
       const a = document.createElement('a');
       a.href = dataURL;
       a.download = fileName + '.png';
@@ -721,24 +651,30 @@
     cancelBtn.addEventListener('click', hideSaveDialog);
     regenerateBtn.addEventListener('click', generateQRCode);
     saveBtnMobile.addEventListener('click', showSaveDialog);
-    if (tableBtn) tableBtn.addEventListener('click', showTableDialog);
-    if (closeTableBtn) closeTableBtn.addEventListener('click', hideTableDialog);
+    // スマホの体格表ボタン
+    tableBtn && tableBtn.addEventListener('click', showTableDialog);
+    closeTableBtn.addEventListener('click', hideTableDialog);
 
     window.addEventListener('keydown', function (e) {
-      if (isDialogVisible && e.key === 'Enter') {
-        saveQRCode();
-        return;
-      }
+      // INPUTまたはSELECTにフォーカスされている場合はキー操作を無効化
       const activeTag = document.activeElement.tagName;
       if (activeTag === 'INPUT' || activeTag === 'SELECT') {
         return;
       }
-      if (e.key === 'Enter' || e.key === ' ') {
+      if (isDialogVisible && e.key === 'Enter') {
+        // PC用ダイアログの場合：Enterで保存実行
+        saveQRCode();
+      } else if (e.key === 'Enter' || e.key === ' ') {
         generateQRCode();
       } else if (e.key === 'S' || e.key === 's') {
         showSaveDialog();
       }
     });
+
+    // スマホ時は体格表ボタンを表示
+    if (window.innerWidth < 768) {
+      document.getElementById('table-btn').style.display = 'inline-block';
+    }
 
     generateQRCode();
   </script>
