@@ -1,605 +1,744 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>電波人間用ランダムQRコード生成サイト</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 20px;
-            font-family: Arial, sans-serif;
-            box-sizing: border-box;
-            gap: 20px;
-            height: 100vh;
-            flex-wrap: wrap;
-        }
-        .table-container {
-            width: 100%;
-            max-width: 400px;
-            margin: 20px 0;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 4px;
-            text-align: center;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        td {
-            word-wrap: break-word;
-            max-width: 120px;
-        }
-        .qr-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            max-width: 500px;
-            margin: 0 auto;
-            width: 35%;
-        }
-        .qr-code {
-            width: 150px;
-            height: 150px;
-            margin-top: 20px;
-        }
-        .qr-message {
-            margin-bottom: 10px;
-            font-size: 16px;
-            color: #333;
-        }
-        .explanation {
-            margin: 10px 0;
-        }
-        .explanation .mid {
-            font-size: 18px;
-            font-weight: bold;
-        }
-        .explanation .small {
-            font-size: 12px;
-            color: #555;
-        }
-        .selectGroup {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .selectGroup > div {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .selectGroup select {
-            padding: 5px;
-            font-size: 14px;
-        }
-        /* 特徴の「その他」用入力欄 */
-        .feature-other {
-            display: none;
-            margin-top: 5px;
-        }
-        .history {
-            width: 100%;
-            max-width: 400px;
-            position: relative;
-            padding: 10px;
-            box-sizing: border-box;
-            margin: 20px 0;
-        }
-        .history p {
-            font-weight: bold;
-        }
-        .history ul {
-            list-style-type: none;
-            padding: 0;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        .history li {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            cursor: pointer;
-        }
-        .history img {
-            width: 40px;
-            height: 40px;
-            margin-right: 10px;
-        }
-        .dialog-container {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #f0f8ff;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            z-index: 101;
-            max-width: 300px;
-            width: 100%;
-        }
-        .dialog-container input {
-            padding: 10px;
-            margin-bottom: 10px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        .dialog-container button {
-            padding: 10px;
-            width: 48%;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 2%;
-        }
-        .dialog-container button:hover {
-            background-color: #45a049;
-        }
-        .dialog-container .cancel-btn {
-            background-color: #f44336;
-        }
-        .dialog-container .cancel-btn:hover {
-            background-color: #e53935;
-        }
-        .title-large {
-            font-size: 30px;
-            font-weight: bold;
-        }
-        .title-medium {
-            font-size: 22px;
-            font-weight: bold;
-        }
-        .title-small {
-            font-size: 14px;
-        }
-        .button-container {
-            display: none;
-        }
-        /* オーバーレイ */
-        #overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.3);
-            z-index: 100;
-        }
-        /* モバイル用のスタイル */
-        @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-            .table-container, .history {
-                width: 100%;
-                margin: 0;
-            }
-            .qr-container {
-                width: 80%;
-            }
-            .button-container {
-                display: block;
-                margin-top: 20px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>電波人間用ランダムQRコード生成サイト</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      box-sizing: border-box;
+      gap: 20px;
+      height: 100vh;
+      flex-wrap: wrap;
+    }
+    .table-container {
+      width: 100%;
+      max-width: 400px;
+      margin: 20px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 4px;
+      text-align: center;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    td {
+      word-wrap: break-word;
+      max-width: 120px;
+    }
+    .qr-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      max-width: 500px;
+      margin: 0 auto;
+      width: 35%;
+    }
+    .qr-code {
+      width: 150px;
+      height: 150px;
+      margin-top: 20px;
+    }
+    .qr-message {
+      margin-bottom: 10px;
+      font-size: 16px;
+      color: #333;
+    }
+    .explanation {
+      margin: 10px 0;
+    }
+    .explanation .mid {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .explanation .small {
+      font-size: 12px;
+      color: #555;
+    }
+    .selectGroup {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .selectGroup > div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .selectGroup select {
+      padding: 5px;
+      font-size: 14px;
+    }
+    /* 特徴の「その他」用入力欄 */
+    .feature-other {
+      display: none;
+      margin-top: 5px;
+    }
+    .history {
+      width: 100%;
+      max-width: 400px;
+      position: relative;
+      padding: 10px;
+      box-sizing: border-box;
+      margin: 20px 0;
+    }
+    .history p {
+      font-weight: bold;
+    }
+    .history ul {
+      list-style-type: none;
+      padding: 0;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .history li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+    .history img {
+      width: 40px;
+      height: 40px;
+      margin-right: 10px;
+    }
+    .dialog-container {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #f0f8ff;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      z-index: 201;
+      max-width: 300px;
+      width: 100%;
+    }
+    .dialog-container input,
+    .dialog-container select {
+      padding: 10px;
+      margin-bottom: 10px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .dialog-container button {
+      padding: 10px;
+      width: 48%;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 2%;
+    }
+    .dialog-container button:hover {
+      background-color: #45a049;
+    }
+    .dialog-container .cancel-btn {
+      background-color: #f44336;
+    }
+    .dialog-container .cancel-btn:hover {
+      background-color: #e53935;
+    }
+    .title-large {
+      font-size: 30px;
+      font-weight: bold;
+    }
+    .title-medium {
+      font-size: 22px;
+      font-weight: bold;
+    }
+    .title-small {
+      font-size: 14px;
+    }
+    .button-container {
+      display: none;
+    }
+    /* オーバーレイ（ダイアログ表示時に背景操作を防止） */
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.3);
+      z-index: 200;
+    }
+    /* 体格表モーダル（スマホ専用） */
+    #tableDialog {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: white;
+      overflow-y: auto;
+      z-index: 300;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    #tableDialog button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 5px 10px;
+    }
+    /* スマホ専用ボタン群 */
+    #tableButton {
+      display: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    /* スマホ（縦画面）用のレイアウト調整 */
+    @media (max-width: 768px) and (orientation: portrait) {
+      .qr-container {
+        width: 100%;
+      }
+      .qr-code {
+        width: 100%;
+        height: auto;
+      }
+      .button-container {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 10px;
+      }
+      .history {
+        width: 100%;
+      }
+      /* 体格表ボタン表示 */
+      #tableButton {
+        display: block;
+      }
+      /* 体格表コンテナは非表示 */
+      .table-container {
+        display: none;
+      }
+    }
+  </style>
 </head>
 <body>
-    <!-- オーバーレイ -->
-    <div id="overlay"></div>
-    
-    <div class="table-container">
-        <h2 class="title-medium">体格表（回避0のみ）</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>アンテナ</th>
-                    <th>最大</th>
-                    <th>最速</th>
-                    <th>備考</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>アン無</td><td>40</td><td>29</td><td></td></tr>
-                <tr><td>単体攻撃</td><td>33</td><td>24</td><td>火水:HP+1<br>風光:回避+1</td></tr>
-                <tr><td>3体攻撃</td><td>35</td><td>26</td><td>火水:HP+1<br>風光:回避+1</td></tr>
-                <tr><td>ノクダ</td><td>38</td><td>28</td><td>回避+1</td></tr>
-                <tr><td>単体回復</td><td>41</td><td>31</td><td></td></tr>
-                <tr><td>単体復活</td><td>42</td><td>32</td><td></td></tr>
-                <tr><td>痺れとる<br>目覚める</td><td>43</td><td>33</td><td></td></tr>
-                <tr><td>解毒<br>属性治す<br>全部治す</td><td>42</td><td>32</td><td></td></tr>
-                <tr><td>単体増強</td><td>36</td><td>27</td><td>かわしやすい<br>:回避+2</td></tr>
-                <tr><td>蓄える</td><td>42</td><td>32</td><td></td></tr>
-                <tr><td>興奮</td><td>37</td><td>27</td><td></td></tr>
-                <tr><td>弱体系</td><td>37</td><td>27</td><td>皆かわしにくい<br>:回避+4</td></tr>
-                <tr><td>無敵</td><td>42</td><td>32</td><td></td></tr>
-                <tr><td>足元ガード</td><td>35</td><td>25</td><td>回避+1</td></tr>
-            </tbody>
-        </table>
+  <!-- オーバーレイ -->
+  <div id="overlay"></div>
+
+  <!-- 体格表（PC用） -->
+  <div class="table-container">
+    <h2 class="title-medium">体格表（回避0のみ）</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>アンテナ</th>
+          <th>最大</th>
+          <th>最速</th>
+          <th>備考</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>アン無</td><td>40</td><td>29</td><td></td></tr>
+        <tr><td>単体攻撃</td><td>33</td><td>24</td><td>火水:HP+1<br>風光:回避+1</td></tr>
+        <tr><td>3体攻撃</td><td>35</td><td>26</td><td>火水:HP+1<br>風光:回避+1</td></tr>
+        <tr><td>ノクダ</td><td>38</td><td>28</td><td>回避+1</td></tr>
+        <tr><td>単体回復</td><td>41</td><td>31</td><td></td></tr>
+        <tr><td>単体復活</td><td>42</td><td>32</td><td></td></tr>
+        <tr><td>痺れとる<br>目覚める</td><td>43</td><td>33</td><td></td></tr>
+        <tr><td>解毒<br>属性治す<br>全部治す</td><td>42</td><td>32</td><td></td></tr>
+        <tr><td>単体増強</td><td>36</td><td>27</td><td>かわしやすい<br>:回避+2</td></tr>
+        <tr><td>蓄える</td><td>42</td><td>32</td><td></td></tr>
+        <tr><td>興奮</td><td>37</td><td>27</td><td></td></tr>
+        <tr><td>弱体系</td><td>37</td><td>27</td><td>皆かわしにくい<br>:回避+4</td></tr>
+        <tr><td>無敵</td><td>42</td><td>32</td><td></td></tr>
+        <tr><td>足元ガード</td><td>35</td><td>25</td><td>回避+1</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- スマホ用体格表ボタン -->
+  <button id="tableButton">体格表</button>
+
+  <!-- 体格表ダイアログ（スマホ用） -->
+  <div id="tableDialog">
+    <button id="closeTableDialog">閉じる</button>
+    <h2 class="title-medium">体格表（回避0のみ）</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>アンテナ</th>
+          <th>最大</th>
+          <th>最速</th>
+          <th>備考</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>アン無</td><td>40</td><td>29</td><td></td></tr>
+        <tr><td>単体攻撃</td><td>33</td><td>24</td><td>火水:HP+1<br>風光:回避+1</td></tr>
+        <tr><td>3体攻撃</td><td>35</td><td>26</td><td>火水:HP+1<br>風光:回避+1</td></tr>
+        <tr><td>ノクダ</td><td>38</td><td>28</td><td>回避+1</td></tr>
+        <tr><td>単体回復</td><td>41</td><td>31</td><td></td></tr>
+        <tr><td>単体復活</td><td>42</td><td>32</td><td></td></tr>
+        <tr><td>痺れとる<br>目覚める</td><td>43</td><td>33</td><td></td></tr>
+        <tr><td>解毒<br>属性治す<br>全部治す</td><td>42</td><td>32</td><td></td></tr>
+        <tr><td>単体増強</td><td>36</td><td>27</td><td>かわしやすい<br>:回避+2</td></tr>
+        <tr><td>蓄える</td><td>42</td><td>32</td><td></td></tr>
+        <tr><td>興奮</td><td>37</td><td>27</td><td></td></tr>
+        <tr><td>弱体系</td><td>37</td><td>27</td><td>皆かわしにくい<br>:回避+4</td></tr>
+        <tr><td>無敵</td><td>42</td><td>32</td><td></td></tr>
+        <tr><td>足元ガード</td><td>35</td><td>25</td><td>回避+1</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="qr-container">
+    <div class="qr-message">
+      <p class="title-large">電波人間用QRコード生成サイト</p>
+      <p class="title-small">Enter/Spaceで「再生成」、Sで「保存」</p>
+      <p class="title-small">右の履歴をクリックで再表示可能</p>
     </div>
-
-    <div class="qr-container">
-        <div class="qr-message">
-            <p class="title-large">電波人間用QRコード生成サイト</p>
-            <p class="title-small">Enter/Spaceで「再生成」、Sで「保存」</p>
-            <p class="title-small">右の履歴をクリックで再表示可能</p>
-        </div>
-        <canvas id="qr-code-canvas" class="qr-code"></canvas>
-        <p id="qr-text">生成回数：1</p>
-        <!-- 追加説明文（上段） -->
-        <div class="explanation">
-            <p class="mid">電波人間の情報を保存画像に追加（任意）</p>
-        </div>
-        <!-- セレクトグループ（入力欄の代替） -->
-        <div class="selectGroup">
-            <div>
-                <strong>回避率</strong>
-                <select id="avoidanceSelect">
-                    <option value="">選択してください</option>
-                    <option value="回避0">回避0</option>
-                    <option value="回避3+">回避3+</option>
-                    <option value="回避3-">回避3-</option>
-                    <option value="回避6">回避6</option>
-                    <option value="回避10">回避10</option>
-                    <option value="回避15">回避15</option>
-                </select>
-            </div>
-            <div>
-                <strong>体格</strong>
-                <select id="physiqueSelect">
-                    <option value="">選択してください</option>
-                    <option value="最速">最速</option>
-                    <option value="準速">準速</option>
-                    <option value="中間">中間</option>
-                    <option value="準大">準大</option>
-                    <option value="最大">最大</option>
-                </select>
-            </div>
-            <div>
-                <strong>色</strong>
-                <select id="colorSelect">
-                    <option value="">選択してください</option>
-                    <option value="黒">黒</option>
-                    <option value="赤">赤</option>
-                    <option value="青">青</option>
-                    <option value="黄">黄</option>
-                    <option value="橙">橙</option>
-                    <option value="緑">緑</option>
-                    <option value="水">水</option>
-                    <option value="紫">紫</option>
-                    <option value="白">白</option>
-                    <option value="濃黒">濃黒</option>
-                    <option value="濃赤">濃赤</option>
-                    <option value="濃青">濃青</option>
-                    <option value="濃黄">濃黄</option>
-                    <option value="濃橙">濃橙</option>
-                    <option value="濃緑">濃緑</option>
-                    <option value="濃水">濃水</option>
-                    <option value="濃紫">濃紫</option>
-                    <option value="濃白">濃白</option>
-                    <option value="薄黒">薄黒</option>
-                    <option value="薄赤">薄赤</option>
-                    <option value="薄青">薄青</option>
-                    <option value="薄黄">薄黄</option>
-                    <option value="薄橙">薄橙</option>
-                    <option value="薄緑">薄緑</option>
-                    <option value="薄水">薄水</option>
-                    <option value="薄紫">薄紫</option>
-                    <option value="薄白">薄白</option>
-                </select>
-            </div>
-            <div>
-                <strong>頭</strong>
-                <select id="headSelect">
-                    <option value="">選択してください</option>
-                    <option value="横楕円">横楕円</option>
-                    <option value="石鹼">石鹼</option>
-                    <option value="丸">丸</option>
-                    <option value="三角">三角</option>
-                    <option value="四角">四角</option>
-                    <option value="縦楕円">縦楕円</option>
-                </select>
-            </div>
-            <div>
-                <strong>アンテナ</strong>
-                <select id="antennaSelect">
-                    <option value="">選択してください</option>
-                    <option value="アン無">アン無</option>
-                    <option value="単体復活">単体復活</option>
-                    <option value="単体回復">単体回復</option>
-                    <option value="単体無敵">単体無敵</option>
-                    <option value="避けにくい">避けにくい</option>
-                    <option value="ノクダ">ノクダ</option>
-                    <option value="治す">治す</option>
-                    <option value="属性治す">属性治す</option>
-                    <option value="興奮">興奮</option>
-                    <option value="足元ガード">足元ガード</option>
-                    <option value="遅くなれ">遅くなれ</option>
-                    <option value="弱くなれ">弱くなれ</option>
-                    <option value="やわくなれ">やわくなれ</option>
-                    <option value="速くなれ">早くなれ</option>
-                    <option value="強くなれ">強くなれ</option>
-                    <option value="硬くなれ">硬くなれ</option>
-                    <option value="かわしやすい">かわしやすい</option>
-                    <option value="毒になれ">毒になれ</option>
-                    <option value="目隠し">目隠し</option>
-                    <option value="痺れされる">痺れされる</option>
-                    <option value="眠らせる">眠らせる</option>
-                    <option value="解毒">解毒</option>
-                    <option value="痺れ取る">痺れ取る</option>
-                    <option value="目覚める">目覚める</option>
-                    <option value="単体火">単体火</option>
-                    <option value="単体水">単体水</option>
-                    <option value="単体電気">単体電気</option>
-                    <option value="単体土">単体土</option>
-                    <option value="単体風">単体風</option>
-                    <option value="単体氷">単体氷</option>
-                    <option value="単体闇">単体闇</option>
-                    <option value="単体光">単体光</option>
-                    <option value="3体火">3体火</option>
-                    <option value="3体水">3体水</option>
-                    <option value="3体電気">3体電気</option>
-                    <option value="3体土">3体土</option>
-                    <option value="3体風">3体風</option>
-                    <option value="3体氷">3体氷</option>
-                    <option value="3体風">3体闇</option>
-                    <option value="3体風">3体光</option>
-                </select>
-            </div>
-            <div>
-                <strong>特徴</strong>
-                <select id="featureSelect">
-                    <option value="">選択してください</option>
-                    <option value="親子">親子</option>
-                    <option value="双子">双子</option>
-                    <option value="顔素材">顔素材</option>
-                    <option value="髪素材">髪素材</option>
-                    <option value="眉素材">眉素材</option>
-                    <option value="目素材">目素材</option>
-                    <option value="鼻素材">鼻素材</option>
-                    <option value="口素材">口素材</option>
-                    <option value="顔色素材">顔色素材</option>
-                    <option value="その他">その他</option>
-                </select>
-                <!-- その他が選択された場合の入力欄 -->
-                <input type="text" id="featureOtherInput" class="feature-other" placeholder="その他の特徴を入力">
-            </div>
-        </div>
-        <!-- 小さい説明文をセレクトグループの下に移動 -->
-        <div class="explanation">
-            <p class="small">＊選択した情報がQRコードの上に出力されます。</p>
-        </div>
-        <div class="button-container">
-            <button id="regenerate-btn">QRコードの再生成</button>
-            <button id="save-btn-mobile">QRコードの保存</button>
-        </div>
+    <canvas id="qr-code-canvas" class="qr-code"></canvas>
+    <p id="qr-text">生成回数：1</p>
+    <!-- 追加説明文（上段） -->
+    <div class="explanation">
+      <p class="mid">電波人間の情報を保存画像に追加（任意）</p>
     </div>
-
-    <div class="history">
-        <p class="title-medium">履歴:</p>
-        <ul id="history-list">
-            <!-- 履歴データ -->
-        </ul>
+    <!-- セレクトグループ（入力欄の代替） -->
+    <div class="selectGroup">
+      <div>
+        <strong>回避率</strong>
+        <select id="avoidanceSelect">
+          <option value="">選択してください</option>
+          <option value="回避0">回避0</option>
+          <option value="回避3+">回避3+</option>
+          <option value="回避3-">回避3-</option>
+          <option value="回避6">回避6</option>
+          <option value="回避10">回避10</option>
+          <option value="回避15">回避15</option>
+        </select>
+      </div>
+      <div>
+        <strong>体格</strong>
+        <select id="physiqueSelect">
+          <option value="">選択してください</option>
+          <option value="最速">最速</option>
+          <option value="準速">準速</option>
+          <option value="中間">中間</option>
+          <option value="準大">準大</option>
+          <option value="最大">最大</option>
+        </select>
+      </div>
+      <div>
+        <strong>色</strong>
+        <select id="colorSelect">
+          <option value="">選択してください</option>
+          <option value="黒">黒</option>
+          <option value="赤">赤</option>
+          <option value="青">青</option>
+          <option value="黄">黄</option>
+          <option value="橙">橙</option>
+          <option value="緑">緑</option>
+          <option value="水">水</option>
+          <option value="紫">紫</option>
+          <option value="白">白</option>
+          <option value="濃黒">濃黒</option>
+          <option value="濃赤">濃赤</option>
+          <option value="濃青">濃青</option>
+          <option value="濃黄">濃黄</option>
+          <option value="濃橙">濃橙</option>
+          <option value="濃緑">濃緑</option>
+          <option value="濃水">濃水</option>
+          <option value="濃紫">濃紫</option>
+          <option value="濃白">濃白</option>
+          <option value="薄黒">薄黒</option>
+          <option value="薄赤">薄赤</option>
+          <option value="薄青">薄青</option>
+          <option value="薄黄">薄黄</option>
+          <option value="薄橙">薄橙</option>
+          <option value="薄緑">薄緑</option>
+          <option value="薄水">薄水</option>
+          <option value="薄紫">薄紫</option>
+          <option value="薄白">薄白</option>
+        </select>
+      </div>
+      <div>
+        <strong>頭</strong>
+        <select id="headSelect">
+          <option value="">選択してください</option>
+          <option value="横楕円">横楕円</option>
+          <option value="石鹼">石鹼</option>
+          <option value="丸">丸</option>
+          <option value="三角">三角</option>
+          <option value="四角">四角</option>
+          <option value="縦楕円">縦楕円</option>
+        </select>
+      </div>
+      <div>
+        <strong>アンテナ</strong>
+        <select id="antennaSelect">
+          <option value="">選択してください</option>
+          <option value="アン無">アン無</option>
+          <option value="単体復活">単体復活</option>
+          <option value="単体回復">単体回復</option>
+          <option value="単体無敵">単体無敵</option>
+          <option value="避けにくい">避けにくい</option>
+          <option value="ノクダ">ノクダ</option>
+          <option value="治す">治す</option>
+          <option value="属性治す">属性治す</option>
+          <option value="興奮">興奮</option>
+          <option value="足元ガード">足元ガード</option>
+          <option value="遅くなれ">遅くなれ</option>
+          <option value="弱くなれ">弱くなれ</option>
+          <option value="やわくなれ">やわくなれ</option>
+          <option value="速くなれ">早くなれ</option>
+          <option value="強くなれ">強くなれ</option>
+          <option value="硬くなれ">硬くなれ</option>
+          <option value="かわしやすい">かわしやすい</option>
+          <option value="毒になれ">毒になれ</option>
+          <option value="目隠し">目隠し</option>
+          <option value="痺れされる">痺れされる</option>
+          <option value="眠らせる">眠らせる</option>
+          <option value="解毒">解毒</option>
+          <option value="痺れ取る">痺れ取る</option>
+          <option value="目覚める">目覚める</option>
+          <option value="単体火">単体火</option>
+          <option value="単体水">単体水</option>
+          <option value="単体電気">単体電気</option>
+          <option value="単体土">単体土</option>
+          <option value="単体風">単体風</option>
+          <option value="単体氷">単体氷</option>
+          <option value="単体闇">単体闇</option>
+          <option value="単体光">単体光</option>
+          <option value="3体火">3体火</option>
+          <option value="3体水">3体水</option>
+          <option value="3体電気">3体電気</option>
+          <option value="3体土">3体土</option>
+          <option value="3体風">3体風</option>
+          <option value="3体氷">3体氷</option>
+          <option value="3体風">3体闇</option>
+          <option value="3体風">3体光</option>
+        </select>
+      </div>
+      <div>
+        <strong>特徴</strong>
+        <select id="featureSelect">
+          <option value="">選択してください</option>
+          <option value="親子">親子</option>
+          <option value="双子">双子</option>
+          <option value="顔素材">顔素材</option>
+          <option value="髪素材">髪素材</option>
+          <option value="眉素材">眉素材</option>
+          <option value="目素材">目素材</option>
+          <option value="鼻素材">鼻素材</option>
+          <option value="口素材">口素材</option>
+          <option value="顔色素材">顔色素材</option>
+          <option value="その他">その他</option>
+        </select>
+        <!-- その他が選択された場合の入力欄 -->
+        <input type="text" id="featureOtherInput" class="feature-other" placeholder="その他の特徴を入力">
+      </div>
     </div>
-
-    <!-- 保存用ファイル名入力ダイアログ -->
-    <div id="dialog" class="dialog-container">
-        <p class="title-medium">ファイル名を入力</p>
-        <p class="title-small">*拡張子は不要です。<br>ファイル名を入力しない場合はそのままENTERを押してください。</p>
-        <input type="text" id="filename-input" placeholder="ファイル名を入力">
-        <div style="display: flex; gap: 2%;">
-            <button id="save-btn">完了</button>
-            <button id="cancel-btn" class="cancel-btn">キャンセル</button>
-        </div>
+    <!-- 小さい説明文（セレクトグループ下） -->
+    <div class="explanation">
+      <p class="small">＊選択した情報がQRコードの上に出力されます。</p>
     </div>
+    <div class="button-container">
+      <button id="regenerate-btn">QRコードの再生成</button>
+      <button id="save-btn-mobile">QRコードの保存</button>
+    </div>
+  </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-    <script>
-        const historyList = document.getElementById('history-list');
-        const qrCanvas = document.getElementById('qr-code-canvas');
-        const qrTextDisplay = document.getElementById('qr-text');
-        const qrSize = 150;
-        let generationCount = 1;
-        let currentQRData = ''; // 現在表示されているQRコードのデータ
-        let savedQRs = []; // 履歴用にQRコードの元データを保存
+  <div class="history">
+    <p class="title-medium">履歴:</p>
+    <ul id="history-list">
+      <!-- 履歴データ -->
+    </ul>
+  </div>
 
-        qrCanvas.width = qrSize;
-        qrCanvas.height = qrSize;
+  <!-- PC用：保存用ファイル名入力ダイアログ -->
+  <div id="dialog" class="dialog-container">
+    <p class="title-medium">ファイル名を入力</p>
+    <p class="title-small">*拡張子は不要です。<br>ファイル名を入力しない場合はそのままENTERを押してください。</p>
+    <input type="text" id="filename-input" placeholder="ファイル名を入力">
+    <div style="display: flex; gap: 2%;">
+      <button id="save-btn">完了</button>
+      <button id="cancel-btn" class="cancel-btn">キャンセル</button>
+    </div>
+  </div>
 
-        const dialog = document.getElementById('dialog');
-        const filenameInput = document.getElementById('filename-input');
-        const saveBtn = document.getElementById('save-btn');
-        const cancelBtn = document.getElementById('cancel-btn');
-        const regenerateBtn = document.getElementById('regenerate-btn');
-        const saveBtnMobile = document.getElementById('save-btn-mobile');
-        const featureSelect = document.getElementById('featureSelect');
-        const featureOtherInput = document.getElementById('featureOtherInput');
-        const overlay = document.getElementById('overlay');
+  <!-- スマホ用：保存時の選択ダイアログ（画像に選択情報を出力するか） -->
+  <div id="mobileSaveDialog" class="dialog-container">
+    <p class="title-medium">画像出力設定</p>
+    <p class="title-small">以下から画像に選択情報を出力するか選んでください。</p>
+    <select id="mobileOutputSelect">
+      <option value="with">出力する</option>
+      <option value="without">出力しない</option>
+    </select>
+    <div style="display: flex; gap: 2%;">
+      <button id="mobileSaveBtn">完了</button>
+      <button id="mobileCancelBtn" class="cancel-btn">キャンセル</button>
+    </div>
+  </div>
 
-        let isDialogVisible = false;
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script>
+    const historyList = document.getElementById('history-list');
+    const qrCanvas = document.getElementById('qr-code-canvas');
+    const qrTextDisplay = document.getElementById('qr-text');
+    const qrSize = 150;
+    let generationCount = 1;
+    let currentQRData = ''; // 現在表示されているQRコードのデータ
+    let savedQRs = []; // 履歴用にQRコードの元データを保存
 
-        // 特徴セレクトの変更イベント
-        featureSelect.addEventListener('change', function() {
-            if (this.value === "その他") {
-                featureOtherInput.style.display = "block";
-            } else {
-                featureOtherInput.style.display = "none";
-            }
+    qrCanvas.width = qrSize;
+    qrCanvas.height = qrSize;
+
+    const dialog = document.getElementById('dialog');
+    const filenameInput = document.getElementById('filename-input');
+    const saveBtn = document.getElementById('save-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const regenerateBtn = document.getElementById('regenerate-btn');
+    const saveBtnMobile = document.getElementById('save-btn-mobile');
+    const featureSelect = document.getElementById('featureSelect');
+    const featureOtherInput = document.getElementById('featureOtherInput');
+    const overlay = document.getElementById('overlay');
+    const mobileSaveDialog = document.getElementById('mobileSaveDialog');
+    const mobileSaveBtn = document.getElementById('mobileSaveBtn');
+    const mobileCancelBtn = document.getElementById('mobileCancelBtn');
+    const mobileOutputSelect = document.getElementById('mobileOutputSelect');
+    const tableButton = document.getElementById('tableButton');
+    const tableDialog = document.getElementById('tableDialog');
+    const closeTableDialog = document.getElementById('closeTableDialog');
+
+    let isDialogVisible = false;
+
+    // 特徴セレクトの変更イベント
+    featureSelect.addEventListener('change', function() {
+      if (this.value === "その他") {
+        featureOtherInput.style.display = "block";
+      } else {
+        featureOtherInput.style.display = "none";
+      }
+    });
+
+    function generateRandomString(length) {
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let result = '';
+      for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+      }
+      return result;
+    }
+
+    function generateQRCode() {
+      const ctx = qrCanvas.getContext('2d');
+      ctx.clearRect(0, 0, qrCanvas.width, qrCanvas.height);
+      const qrCodeText = generateRandomString(126);
+      QRCode.toCanvas(qrCanvas, qrCodeText, function (error) {
+        if (error) console.error(error);
+        currentQRData = qrCodeText; // 現在のQRコードデータを保持
+        qrTextDisplay.textContent = `生成回数：${generationCount}`;
+        addToHistory(qrCanvas.toDataURL(), `生成No.${generationCount}`, qrCodeText);
+        generationCount++;
+      });
+    }
+
+    function addToHistory(qrData, qrString, qrCodeText) {
+      savedQRs.push({ qrData, qrString, qrCodeText });
+      const listItem = document.createElement('li');
+      listItem.innerHTML = `<img src="${qrData}" class="qr-code"> <br> ${qrString}`;
+      listItem.addEventListener('click', () => {
+        // 過去のQRコードを保存されたデータで再表示
+        QRCode.toCanvas(qrCanvas, qrCodeText, function (error) {
+          if (error) console.error(error);
         });
+        // 履歴の生成番号から数値部分を取り出して表示
+        const num = qrString.replace('生成No.', '');
+        qrTextDisplay.textContent = `生成回数：${num}`;
+      });
+      historyList.insertBefore(listItem, historyList.firstChild);
+    }
 
-        function generateRandomString(length) {
-            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            let result = '';
-            for (let i = 0; i < length; i++) {
-                result += characters.charAt(Math.floor(Math.random() * characters.length));
-            }
-            return result;
+    // PC用ダイアログ表示（従来）
+    function showSaveDialog() {
+      filenameInput.value = '';
+      overlay.style.display = 'block';
+      setTimeout(() => {
+        dialog.style.display = 'block';
+        filenameInput.focus();
+        isDialogVisible = true;
+      }, 100);
+    }
+
+    function hideSaveDialog() {
+      dialog.style.display = 'none';
+      overlay.style.display = 'none';
+      isDialogVisible = false;
+    }
+
+    // モバイル用保存ダイアログ表示
+    function showMobileSaveDialog() {
+      overlay.style.display = 'block';
+      setTimeout(() => {
+        mobileSaveDialog.style.display = 'block';
+        mobileSaveDialog.querySelector('select').focus();
+        isDialogVisible = true;
+      }, 100);
+    }
+
+    function hideMobileSaveDialog() {
+      mobileSaveDialog.style.display = 'none';
+      overlay.style.display = 'none';
+      isDialogVisible = false;
+    }
+
+    // テキストを指定の条件で改行する関数（文字数許容量を12字に変更）
+    function wrapText(text, maxChars = 12) {
+      let lines = [];
+      while (text.length > maxChars) {
+        let breakPos = -1;
+        let searchStart = Math.max(0, maxChars - 3);
+        let searchEnd = Math.min(text.length, maxChars + 3);
+        for (let i = searchEnd - 1; i >= searchStart; i--) {
+          if (text.charAt(i) === ' ') {
+            breakPos = i;
+            break;
+          }
         }
-
-        function generateQRCode() {
-            const ctx = qrCanvas.getContext('2d');
-            ctx.clearRect(0, 0, qrCanvas.width, qrCanvas.height);
-            const qrCodeText = generateRandomString(126);
-            QRCode.toCanvas(qrCanvas, qrCodeText, function (error) {
-                if (error) console.error(error);
-                currentQRData = qrCodeText; // 現在のQRコードデータを保持
-                qrTextDisplay.textContent = `生成回数：${generationCount}`;
-                addToHistory(qrCanvas.toDataURL(), `生成No.${generationCount}`, qrCodeText);
-                generationCount++;
-            });
+        if (breakPos === -1) {
+          breakPos = maxChars;
         }
+        lines.push(text.substring(0, breakPos).trim());
+        text = text.substring(breakPos).trim();
+      }
+      if (text.length > 0) lines.push(text);
+      return lines;
+    }
 
-        function addToHistory(qrData, qrString, qrCodeText) {
-            savedQRs.push({ qrData, qrString, qrCodeText });
-            const listItem = document.createElement('li');
-            listItem.innerHTML = `<img src="${qrData}" class="qr-code"> <br> ${qrString}`;
-            listItem.addEventListener('click', () => {
-                // 過去のQRコードを保存されたデータで再表示
-                QRCode.toCanvas(qrCanvas, qrCodeText, function (error) {
-                    if (error) console.error(error);
-                });
-                // 履歴の生成番号から数値部分を取り出して表示
-                const num = qrString.replace('生成No.', '');
-                qrTextDisplay.textContent = `生成回数：${num}`;
-            });
-            historyList.insertBefore(listItem, historyList.firstChild);
+    // saveQRCode: outputTextフラグに応じてテキスト出力有無を切り替え
+    function saveQRCode(outputText) {
+      let dataURL;
+      if (outputText) {
+        // 各セレクトボックスの値を取得し、空でないものを連結
+        const avoidance = document.getElementById('avoidanceSelect').value;
+        const physique = document.getElementById('physiqueSelect').value;
+        const color = document.getElementById('colorSelect').value;
+        const head = document.getElementById('headSelect').value;
+        const antenna = document.getElementById('antennaSelect').value;
+        let feature = document.getElementById('featureSelect').value;
+        if (feature === "その他") {
+          feature = featureOtherInput.value;
         }
-
-        function showSaveDialog() {
-            filenameInput.value = '';
-            // オーバーレイ表示
-            overlay.style.display = 'block';
-            setTimeout(() => {
-                dialog.style.display = 'block';
-                filenameInput.focus();
-                isDialogVisible = true;
-            }, 100);
+        let parts = [];
+        if (avoidance) parts.push(avoidance);
+        if (physique) parts.push(physique);
+        if (color) parts.push(color);
+        if (head) parts.push(head);
+        if (antenna) parts.push(antenna);
+        if (feature) parts.push(feature);
+        const text = parts.join(" ");
+        
+        let wrappedLines = [];
+        if (text) {
+          wrappedLines = wrapText(text, 12);
         }
-
-        function hideSaveDialog() {
-            dialog.style.display = 'none';
-            overlay.style.display = 'none';
-            isDialogVisible = false;
+        const lineHeight = 30;
+        const textAreaHeight = wrappedLines.length * lineHeight;
+        const combinedCanvas = document.createElement('canvas');
+        combinedCanvas.width = qrCanvas.width;
+        combinedCanvas.height = qrCanvas.height + textAreaHeight;
+        const combinedCtx = combinedCanvas.getContext('2d');
+        if (text) {
+          combinedCtx.fillStyle = 'white';
+          combinedCtx.fillRect(0, 0, combinedCanvas.width, textAreaHeight);
+          combinedCtx.fillStyle = 'black';
+          combinedCtx.font = 'bold 16px Arial';
+          combinedCtx.textAlign = 'center';
+          combinedCtx.textBaseline = 'middle';
+          for (let i = 0; i < wrappedLines.length; i++) {
+            combinedCtx.fillText(wrappedLines[i], combinedCanvas.width / 2, lineHeight / 2 + i * lineHeight);
+          }
         }
+        combinedCtx.drawImage(qrCanvas, 0, textAreaHeight);
+        dataURL = combinedCanvas.toDataURL();
+      } else {
+        dataURL = qrCanvas.toDataURL();
+      }
+      // ファイル名はPCではダイアログから、モバイルでは自動（例：currentQRData）を使用
+      let fileName = currentQRData;
+      // PCの場合、もしファイル名入力があるならそちらを使用
+      if (dialog.style.display === 'block' && filenameInput.value.trim() !== '') {
+        fileName = filenameInput.value.trim();
+      }
+      const a = document.createElement('a');
+      a.href = dataURL;
+      a.download = fileName + '.png';
+      a.click();
+      // 隠すダイアログ
+      if (mobileSaveDialog.style.display === 'block') {
+        hideMobileSaveDialog();
+      } else {
+        hideSaveDialog();
+      }
+    }
 
-        // テキストを指定の条件で改行する関数（文字数許容量を12字に変更）
-        function wrapText(text, maxChars = 12) {
-            let lines = [];
-            while (text.length > maxChars) {
-                let breakPos = -1;
-                // 検索範囲：maxChars-3 ～ maxChars+3（インデックスは0始まり）
-                let searchStart = Math.max(0, maxChars - 3);
-                let searchEnd = Math.min(text.length, maxChars + 3);
-                for (let i = searchEnd - 1; i >= searchStart; i--) {
-                    if (text.charAt(i) === ' ') {
-                        breakPos = i;
-                        break;
-                    }
-                }
-                if (breakPos === -1) {
-                    breakPos = maxChars;
-                }
-                lines.push(text.substring(0, breakPos).trim());
-                text = text.substring(breakPos).trim();
-            }
-            if (text.length > 0) lines.push(text);
-            return lines;
-        }
+    saveBtn.addEventListener('click', saveQRCode);
+    cancelBtn.addEventListener('click', hideSaveDialog);
+    regenerateBtn.addEventListener('click', generateQRCode);
+    saveBtnMobile.addEventListener('click', function() {
+      // スマホの場合はファイル名ダイアログの代わりにmobileSaveDialogを表示
+      showMobileSaveDialog();
+    });
+    mobileSaveBtn.addEventListener('click', function() {
+      const outputOption = mobileOutputSelect.value; // "with" または "without"
+      saveQRCode(outputOption === "with");
+    });
+    mobileCancelBtn.addEventListener('click', hideMobileSaveDialog);
 
-        function saveQRCode() {
-            // 各セレクトボックスの値を取得し、空でないものを連結
-            const avoidance = document.getElementById('avoidanceSelect').value;
-            const physique = document.getElementById('physiqueSelect').value;
-            const color = document.getElementById('colorSelect').value;
-            const head = document.getElementById('headSelect').value;
-            const antenna = document.getElementById('antennaSelect').value;
-            let feature = document.getElementById('featureSelect').value;
-            if(feature === "その他") {
-                feature = featureOtherInput.value;
-            }
-            let parts = [];
-            if(avoidance) parts.push(avoidance);
-            if(physique) parts.push(physique);
-            if(color) parts.push(color);
-            if(head) parts.push(head);
-            if(antenna) parts.push(antenna);
-            if(feature) parts.push(feature);
-            const text = parts.join(" ");
-            
-            // 改行処理（許容量12字）
-            let wrappedLines = [];
-            if (text) {
-                wrappedLines = wrapText(text, 12);
-            }
-            const lineHeight = 30; // 各行の高さ
-            const textAreaHeight = wrappedLines.length * lineHeight;
-            const combinedCanvas = document.createElement('canvas');
-            combinedCanvas.width = qrCanvas.width;
-            combinedCanvas.height = qrCanvas.height + textAreaHeight;
-            const combinedCtx = combinedCanvas.getContext('2d');
-
-            if (text) {
-                // 上部に白背景を描画
-                combinedCtx.fillStyle = 'white';
-                combinedCtx.fillRect(0, 0, combinedCanvas.width, textAreaHeight);
-                // テキストを各行ごとに中央揃え・太字で描画
-                combinedCtx.fillStyle = 'black';
-                combinedCtx.font = 'bold 16px Arial';
-                combinedCtx.textAlign = 'center';
-                combinedCtx.textBaseline = 'middle';
-                for (let i = 0; i < wrappedLines.length; i++) {
-                    combinedCtx.fillText(wrappedLines[i], combinedCanvas.width / 2, lineHeight / 2 + i * lineHeight);
-                }
-            }
-            // QRコード画像をテキストの下に描画
-            combinedCtx.drawImage(qrCanvas, 0, textAreaHeight);
-
-            const dataURL = combinedCanvas.toDataURL();
-            const fileName = filenameInput.value.trim() || currentQRData;
-            const a = document.createElement('a');
-            a.href = dataURL;
-            a.download = fileName + '.png';
-            a.click();
-            hideSaveDialog();
-        }
-
-        saveBtn.addEventListener('click', saveQRCode);
-        cancelBtn.addEventListener('click', hideSaveDialog);
-        regenerateBtn.addEventListener('click', generateQRCode);
-        saveBtnMobile.addEventListener('click', showSaveDialog);
-
-        window.addEventListener('keydown', function (e) {
-            // 入力欄またはセレクト要素がフォーカスされている場合はキー操作を無効化
-            const activeTag = document.activeElement.tagName;
-            if (activeTag === 'INPUT' || activeTag === 'SELECT') {
-                return;
-            }
-            if (isDialogVisible && e.key === 'Enter') {
-                saveQRCode();
-            } else if (e.key === 'Enter' || e.key === ' ') {
-                generateQRCode();
-            } else if (e.key === 'S' || e.key === 's') {
-                showSaveDialog();
-            }
-        });
-
+    window.addEventListener('keydown', function (e) {
+      const activeTag = document.activeElement.tagName;
+      // 入力欄またはセレクト要素がフォーカスされている場合は操作をロック
+      if (activeTag === 'INPUT' || activeTag === 'SELECT') {
+        return;
+      }
+      if (isDialogVisible && e.key === 'Enter') {
+        // PC用ダイアログが表示されている場合
+        saveQRCode(true);
+      } else if (e.key === 'Enter' || e.key === ' ') {
         generateQRCode();
-    </script>
+      } else if (e.key === 'S' || e.key === 's') {
+        // スマホではsaveBtnMobileが使用される
+        showSaveDialog();
+      }
+    });
+
+    generateQRCode();
+
+    // 体格表モーダル（スマホ用）操作
+    tableButton.addEventListener('click', function() {
+      overlay.style.display = 'block';
+      tableDialog.style.display = 'block';
+    });
+    closeTableDialog.addEventListener('click', function() {
+      tableDialog.style.display = 'none';
+      overlay.style.display = 'none';
+    });
+  </script>
 </body>
 </html>
