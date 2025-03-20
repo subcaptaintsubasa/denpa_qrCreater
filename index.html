@@ -55,30 +55,42 @@
       width: 35%;
       position: relative;
     }
-    /* QRコードコンテナ：スマホ時に正方形を維持 */
+    /* QRコードコンテナ：正方形維持用 */
     .qr-code-container {
       position: relative;
       width: 100%;
+      margin: 0 auto;
     }
     @media (max-width: 768px) {
       .qr-code-container {
         padding-top: 100%;
       }
     }
-    /* キャンバスはコンテナ内で絶対配置、中央にフィット */
+    /* キャンバスはコンテナ内で絶対配置 */
     #qr-code-canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: block;
-      margin: 0;
+      position: relative;
+      width: 150px;
+      height: 150px;
+      margin-top: 20px;
+    }
+    @media (max-width: 768px) {
+      #qr-code-canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        margin-top: 0;
+      }
     }
     .qr-message {
       margin-bottom: 10px;
       font-size: 16px;
       color: #333;
+    }
+    /* 生成回数の表示 */
+    #qr-text {
+      margin: 10px 0 0 0;
     }
     .explanation {
       margin: 10px 0;
@@ -203,12 +215,21 @@
       background: rgba(0,0,0,0.3);
       z-index: 100;
     }
-    /* 体格表ダイアログ（スマホ用） */
+    /* 体格表ダイアログ（スマホ用）：中央寄せ */
     #tableDialog {
       max-width: 100%;
       width: 100%;
       height: 100%;
       display: none;
+      text-align: center;
+    }
+    #tableDialog .table-container {
+      margin: 0 auto;
+    }
+    #tableDialog h2, 
+    #tableDialog table,
+    #closeTableBtn {
+      margin: 0 auto;
     }
     /* スマホ（縦画面）時の調整 */
     @media (max-width: 768px) {
@@ -228,36 +249,25 @@
         font-size: 18px;
         padding: 15px;
       }
+      /* ボタン行はスマホ時のみ表示 */
       .button-row {
         display: flex;
-      }
-      /* セレクトグループと既存の説明文（中サイズ）はQRコードの下に配置 */
-      .qr-container > .selectGroup,
-      .qr-container > .explanation.mid,
-      .qr-container > .explanation.small {
-        order: 4;
-      }
-      /* ボタン行はQRコードの下に配置 */
-      .qr-container > .button-row {
-        order: 2;
       }
       /* 既存の説明文（中サイズ）はQRコードの下に配置 */
       .qr-container > .explanation.mid {
         order: 3;
       }
+      /* セレクトグループと下段の説明文は下部に配置 */
+      .qr-container > .selectGroup,
+      .qr-container > .explanation.small {
+        order: 4;
+      }
     }
-    /* パソコン時は「体格表」ボタンを非表示 */
+    /* パソコン時は「体格表」ボタン非表示 */
     @media (min-width: 769px) {
       .mobile-only {
         display: none;
       }
-    }
-    /* 体格表ダイアログの閉じるボタン中央配置 */
-    #closeTableBtn {
-      display: block;
-      margin: 10px auto 0;
-      font-size: 18px;
-      padding: 10px 20px;
     }
   </style>
 </head>
@@ -302,18 +312,18 @@
       <p class="title-small">Enter/Spaceで「再生成」、Sで「保存」</p>
       <p class="title-small">右の履歴をクリックで再表示可能</p>
     </div>
-    <!-- QRコードを正方形に保つコンテナ -->
+    <!-- QRコードを囲むコンテナ -->
     <div class="qr-code-container">
       <canvas id="qr-code-canvas" class="qr-code"></canvas>
     </div>
     <p id="qr-text">生成回数：1</p>
-    <!-- スマホ用ボタン行（体格表、再生成、保存） -->
+    <!-- スマホ用ボタン行（体格表、再生成、保存）：上部に配置 -->
     <div class="button-row mobile-only">
       <button id="tableBtn">体格表</button>
       <button id="regenerate-btn">再生成</button>
       <button id="save-btn-mobile">保存</button>
     </div>
-    <!-- PC用ボタン群（非表示） -->
+    <!-- 既存のPC用ボタン群（非表示） -->
     <div class="button-container">
       <button id="regenerate-btn">QRコードの再生成</button>
       <button id="save-btn-mobile">QRコードの保存</button>
@@ -482,11 +492,11 @@
   </div>
 
   <!-- 体格表ダイアログ（スマホ用） -->
-  <div id="tableDialog" class="dialog-container" style="max-width:100%; width:100%; height:100%; display:none;">
+  <div id="tableDialog" class="dialog-container" style="max-width:100%; width:100%; height:100%; display:none; text-align:center;">
     <div style="overflow:auto; height:80vh;">
-      <div class="table-container" style="display:block;">
+      <div class="table-container" style="display:block; margin: 0 auto; text-align:center;">
         <h2 class="title-medium">体格表（回避0のみ）</h2>
-        <table>
+        <table style="margin: 0 auto;">
           <thead>
             <tr>
               <th>アンテナ</th>
@@ -514,7 +524,7 @@
         </table>
       </div>
     </div>
-    <button id="closeTableBtn">閉じる</button>
+    <button id="closeTableBtn" style="display:block; margin:10px auto;">閉じる</button>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
