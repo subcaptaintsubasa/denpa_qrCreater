@@ -141,16 +141,18 @@
       max-height: 400px;
       overflow-y: auto;
     }
+    /* 履歴リストの各項目を横並びに */
     .history li {
       display: flex;
       align-items: center;
       margin-bottom: 10px;
       cursor: pointer;
     }
-    .history img {
-      width: 40px;
-      height: 40px;
+    .history li img {
       margin-right: 10px;
+    }
+    .history li span {
+      display: inline-block;
     }
     .dialog-container {
       display: none;
@@ -215,21 +217,23 @@
       background: rgba(0,0,0,0.3);
       z-index: 100;
     }
-    /* 体格表ダイアログ（スマホ用）：中央寄せ */
+    /* 体格表ダイアログ（スマホ用）：中央寄せ、余白追加 */
     #tableDialog {
       max-width: 100%;
       width: 100%;
       height: 100%;
       display: none;
       text-align: center;
+      padding-top: 20px;
     }
     #tableDialog .table-container {
-      margin: 0 auto;
+      margin: 20px auto;
+      text-align: center;
     }
     #tableDialog h2, 
     #tableDialog table,
     #closeTableBtn {
-      margin: 0 auto;
+      margin: 10px auto;
     }
     /* スマホ（縦画面）時の調整 */
     @media (max-width: 768px) {
@@ -263,7 +267,7 @@
         order: 4;
       }
     }
-    /* パソコン時は「体格表」ボタン非表示 */
+    /* パソコン時は「体格表」ボタンを非表示 */
     @media (min-width: 769px) {
       .mobile-only {
         display: none;
@@ -492,10 +496,10 @@
   </div>
 
   <!-- 体格表ダイアログ（スマホ用） -->
-  <div id="tableDialog" class="dialog-container" style="max-width:100%; width:100%; height:100%; display:none; text-align:center;">
+  <div id="tableDialog" class="dialog-container" style="max-width:100%; width:100%; height:100%; display:none; text-align:center; padding-top:20px;">
     <div style="overflow:auto; height:80vh;">
-      <div class="table-container" style="display:block; margin: 0 auto; text-align:center;">
-        <h2 class="title-medium">体格表（回避0のみ）</h2>
+      <div class="table-container" style="display:block; margin: 20px auto; text-align:center;">
+        <h2 class="title-medium" style="margin-bottom:20px;">体格表（回避0のみ）</h2>
         <table style="margin: 0 auto;">
           <thead>
             <tr>
@@ -524,7 +528,7 @@
         </table>
       </div>
     </div>
-    <button id="closeTableBtn" style="display:block; margin:10px auto;">閉じる</button>
+    <button id="closeTableBtn" style="display:block; margin:20px auto;">閉じる</button>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
@@ -590,7 +594,7 @@
     function addToHistory(qrData, qrString, qrCodeText) {
       savedQRs.push({ qrData, qrString, qrCodeText });
       const listItem = document.createElement('li');
-      listItem.innerHTML = `<img src="${qrData}" class="qr-code"> <br> ${qrString}`;
+      listItem.innerHTML = `<img src="${qrData}" class="qr-code"> <span>${qrString}</span>`;
       listItem.addEventListener('click', () => {
         QRCode.toCanvas(qrCanvas, qrCodeText, function (error) {
           if (error) console.error(error);
