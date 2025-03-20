@@ -58,14 +58,15 @@
       font-size: 16px;
       color: #333;
     }
-    .explanation {
+    /* 追加情報（説明文＋セレクトグループ）のコンテナ */
+    .additional-info {
       margin: 10px 0;
     }
-    .explanation .mid {
+    .additional-info .mid {
       font-size: 18px;
       font-weight: bold;
     }
-    .explanation .small {
+    .additional-info .small {
       font-size: 12px;
       color: #555;
     }
@@ -170,7 +171,10 @@
       font-size: 14px;
     }
     .button-container {
-      display: none;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 10px;
     }
     /* オーバーレイ（ダイアログ表示時に背景操作を防止） */
     #overlay {
@@ -182,7 +186,7 @@
       background: rgba(0,0,0,0.3);
       z-index: 200;
     }
-    /* 体格表モーダル（スマホ専用） */
+    /* 体格表モーダル（スマホ用） */
     #tableDialog {
       display: none;
       position: fixed;
@@ -201,12 +205,12 @@
       right: 10px;
       padding: 5px 10px;
     }
-    /* スマホ専用ボタン群 */
+    /* スマホ専用ボタン：体格表ボタン（移動） */
     #tableButton {
       display: none;
       padding: 10px 20px;
       font-size: 16px;
-      margin-bottom: 10px;
+      margin-top: 10px;
     }
     /* スマホ（縦画面）用のレイアウト調整 */
     @media (max-width: 768px) and (orientation: portrait) {
@@ -217,22 +221,13 @@
         width: 100%;
         height: auto;
       }
-      .button-container {
-        display: flex;
-        gap: 10px;
-        justify-content: center;
-        margin-top: 10px;
+      /* メイン画面では追加情報を非表示 */
+      .additional-info {
+        display: none;
       }
-      .history {
-        width: 100%;
-      }
-      /* 体格表ボタン表示 */
+      /* 体格表ボタンはスマホ用として表示、かつ位置を下部に */
       #tableButton {
         display: block;
-      }
-      /* 体格表コンテナは非表示 */
-      .table-container {
-        display: none;
       }
     }
   </style>
@@ -272,7 +267,7 @@
     </table>
   </div>
 
-  <!-- スマホ用体格表ボタン -->
+  <!-- 体格表ボタン（スマホ用、移動先は下部） -->
   <button id="tableButton">体格表</button>
 
   <!-- 体格表ダイアログ（スマホ用） -->
@@ -315,153 +310,151 @@
     </div>
     <canvas id="qr-code-canvas" class="qr-code"></canvas>
     <p id="qr-text">生成回数：1</p>
-    <!-- 追加説明文（上段） -->
-    <div class="explanation">
+    <!-- ※PC用追加情報（説明文＋選択グループ） -->
+    <div class="additional-info">
       <p class="mid">電波人間の情報を保存画像に追加（任意）</p>
-    </div>
-    <!-- セレクトグループ（入力欄の代替） -->
-    <div class="selectGroup">
-      <div>
-        <strong>回避率</strong>
-        <select id="avoidanceSelect">
-          <option value="">選択してください</option>
-          <option value="回避0">回避0</option>
-          <option value="回避3+">回避3+</option>
-          <option value="回避3-">回避3-</option>
-          <option value="回避6">回避6</option>
-          <option value="回避10">回避10</option>
-          <option value="回避15">回避15</option>
-        </select>
+      <div class="selectGroup">
+        <div>
+          <strong>回避率</strong>
+          <select id="avoidanceSelect">
+            <option value="">選択してください</option>
+            <option value="回避0">回避0</option>
+            <option value="回避3+">回避3+</option>
+            <option value="回避3-">回避3-</option>
+            <option value="回避6">回避6</option>
+            <option value="回避10">回避10</option>
+            <option value="回避15">回避15</option>
+          </select>
+        </div>
+        <div>
+          <strong>体格</strong>
+          <select id="physiqueSelect">
+            <option value="">選択してください</option>
+            <option value="最速">最速</option>
+            <option value="準速">準速</option>
+            <option value="中間">中間</option>
+            <option value="準大">準大</option>
+            <option value="最大">最大</option>
+          </select>
+        </div>
+        <div>
+          <strong>色</strong>
+          <select id="colorSelect">
+            <option value="">選択してください</option>
+            <option value="黒">黒</option>
+            <option value="赤">赤</option>
+            <option value="青">青</option>
+            <option value="黄">黄</option>
+            <option value="橙">橙</option>
+            <option value="緑">緑</option>
+            <option value="水">水</option>
+            <option value="紫">紫</option>
+            <option value="白">白</option>
+            <option value="濃黒">濃黒</option>
+            <option value="濃赤">濃赤</option>
+            <option value="濃青">濃青</option>
+            <option value="濃黄">濃黄</option>
+            <option value="濃橙">濃橙</option>
+            <option value="濃緑">濃緑</option>
+            <option value="濃水">濃水</option>
+            <option value="濃紫">濃紫</option>
+            <option value="濃白">濃白</option>
+            <option value="薄黒">薄黒</option>
+            <option value="薄赤">薄赤</option>
+            <option value="薄青">薄青</option>
+            <option value="薄黄">薄黄</option>
+            <option value="薄橙">薄橙</option>
+            <option value="薄緑">薄緑</option>
+            <option value="薄水">薄水</option>
+            <option value="薄紫">薄紫</option>
+            <option value="薄白">薄白</option>
+          </select>
+        </div>
+        <div>
+          <strong>頭</strong>
+          <select id="headSelect">
+            <option value="">選択してください</option>
+            <option value="横楕円">横楕円</option>
+            <option value="石鹼">石鹼</option>
+            <option value="丸">丸</option>
+            <option value="三角">三角</option>
+            <option value="四角">四角</option>
+            <option value="縦楕円">縦楕円</option>
+          </select>
+        </div>
+        <div>
+          <strong>アンテナ</strong>
+          <select id="antennaSelect">
+            <option value="">選択してください</option>
+            <option value="アン無">アン無</option>
+            <option value="単体復活">単体復活</option>
+            <option value="単体回復">単体回復</option>
+            <option value="単体無敵">単体無敵</option>
+            <option value="避けにくい">避けにくい</option>
+            <option value="ノクダ">ノクダ</option>
+            <option value="治す">治す</option>
+            <option value="属性治す">属性治す</option>
+            <option value="興奮">興奮</option>
+            <option value="足元ガード">足元ガード</option>
+            <option value="遅くなれ">遅くなれ</option>
+            <option value="弱くなれ">弱くなれ</option>
+            <option value="やわくなれ">やわくなれ</option>
+            <option value="速くなれ">早くなれ</option>
+            <option value="強くなれ">強くなれ</option>
+            <option value="硬くなれ">硬くなれ</option>
+            <option value="かわしやすい">かわしやすい</option>
+            <option value="毒になれ">毒になれ</option>
+            <option value="目隠し">目隠し</option>
+            <option value="痺れされる">痺れされる</option>
+            <option value="眠らせる">眠らせる</option>
+            <option value="解毒">解毒</option>
+            <option value="痺れ取る">痺れ取る</option>
+            <option value="目覚める">目覚める</option>
+            <option value="単体火">単体火</option>
+            <option value="単体水">単体水</option>
+            <option value="単体電気">単体電気</option>
+            <option value="単体土">単体土</option>
+            <option value="単体風">単体風</option>
+            <option value="単体氷">単体氷</option>
+            <option value="単体闇">単体闇</option>
+            <option value="単体光">単体光</option>
+            <option value="3体火">3体火</option>
+            <option value="3体水">3体水</option>
+            <option value="3体電気">3体電気</option>
+            <option value="3体土">3体土</option>
+            <option value="3体風">3体風</option>
+            <option value="3体氷">3体氷</option>
+            <option value="3体風">3体闇</option>
+            <option value="3体風">3体光</option>
+          </select>
+        </div>
+        <div>
+          <strong>特徴</strong>
+          <select id="featureSelect">
+            <option value="">選択してください</option>
+            <option value="親子">親子</option>
+            <option value="双子">双子</option>
+            <option value="顔素材">顔素材</option>
+            <option value="髪素材">髪素材</option>
+            <option value="眉素材">眉素材</option>
+            <option value="目素材">目素材</option>
+            <option value="鼻素材">鼻素材</option>
+            <option value="口素材">口素材</option>
+            <option value="顔色素材">顔色素材</option>
+            <option value="その他">その他</option>
+          </select>
+          <input type="text" id="featureOtherInput" class="feature-other" placeholder="その他の特徴を入力">
+        </div>
       </div>
-      <div>
-        <strong>体格</strong>
-        <select id="physiqueSelect">
-          <option value="">選択してください</option>
-          <option value="最速">最速</option>
-          <option value="準速">準速</option>
-          <option value="中間">中間</option>
-          <option value="準大">準大</option>
-          <option value="最大">最大</option>
-        </select>
-      </div>
-      <div>
-        <strong>色</strong>
-        <select id="colorSelect">
-          <option value="">選択してください</option>
-          <option value="黒">黒</option>
-          <option value="赤">赤</option>
-          <option value="青">青</option>
-          <option value="黄">黄</option>
-          <option value="橙">橙</option>
-          <option value="緑">緑</option>
-          <option value="水">水</option>
-          <option value="紫">紫</option>
-          <option value="白">白</option>
-          <option value="濃黒">濃黒</option>
-          <option value="濃赤">濃赤</option>
-          <option value="濃青">濃青</option>
-          <option value="濃黄">濃黄</option>
-          <option value="濃橙">濃橙</option>
-          <option value="濃緑">濃緑</option>
-          <option value="濃水">濃水</option>
-          <option value="濃紫">濃紫</option>
-          <option value="濃白">濃白</option>
-          <option value="薄黒">薄黒</option>
-          <option value="薄赤">薄赤</option>
-          <option value="薄青">薄青</option>
-          <option value="薄黄">薄黄</option>
-          <option value="薄橙">薄橙</option>
-          <option value="薄緑">薄緑</option>
-          <option value="薄水">薄水</option>
-          <option value="薄紫">薄紫</option>
-          <option value="薄白">薄白</option>
-        </select>
-      </div>
-      <div>
-        <strong>頭</strong>
-        <select id="headSelect">
-          <option value="">選択してください</option>
-          <option value="横楕円">横楕円</option>
-          <option value="石鹼">石鹼</option>
-          <option value="丸">丸</option>
-          <option value="三角">三角</option>
-          <option value="四角">四角</option>
-          <option value="縦楕円">縦楕円</option>
-        </select>
-      </div>
-      <div>
-        <strong>アンテナ</strong>
-        <select id="antennaSelect">
-          <option value="">選択してください</option>
-          <option value="アン無">アン無</option>
-          <option value="単体復活">単体復活</option>
-          <option value="単体回復">単体回復</option>
-          <option value="単体無敵">単体無敵</option>
-          <option value="避けにくい">避けにくい</option>
-          <option value="ノクダ">ノクダ</option>
-          <option value="治す">治す</option>
-          <option value="属性治す">属性治す</option>
-          <option value="興奮">興奮</option>
-          <option value="足元ガード">足元ガード</option>
-          <option value="遅くなれ">遅くなれ</option>
-          <option value="弱くなれ">弱くなれ</option>
-          <option value="やわくなれ">やわくなれ</option>
-          <option value="速くなれ">早くなれ</option>
-          <option value="強くなれ">強くなれ</option>
-          <option value="硬くなれ">硬くなれ</option>
-          <option value="かわしやすい">かわしやすい</option>
-          <option value="毒になれ">毒になれ</option>
-          <option value="目隠し">目隠し</option>
-          <option value="痺れされる">痺れされる</option>
-          <option value="眠らせる">眠らせる</option>
-          <option value="解毒">解毒</option>
-          <option value="痺れ取る">痺れ取る</option>
-          <option value="目覚める">目覚める</option>
-          <option value="単体火">単体火</option>
-          <option value="単体水">単体水</option>
-          <option value="単体電気">単体電気</option>
-          <option value="単体土">単体土</option>
-          <option value="単体風">単体風</option>
-          <option value="単体氷">単体氷</option>
-          <option value="単体闇">単体闇</option>
-          <option value="単体光">単体光</option>
-          <option value="3体火">3体火</option>
-          <option value="3体水">3体水</option>
-          <option value="3体電気">3体電気</option>
-          <option value="3体土">3体土</option>
-          <option value="3体風">3体風</option>
-          <option value="3体氷">3体氷</option>
-          <option value="3体風">3体闇</option>
-          <option value="3体風">3体光</option>
-        </select>
-      </div>
-      <div>
-        <strong>特徴</strong>
-        <select id="featureSelect">
-          <option value="">選択してください</option>
-          <option value="親子">親子</option>
-          <option value="双子">双子</option>
-          <option value="顔素材">顔素材</option>
-          <option value="髪素材">髪素材</option>
-          <option value="眉素材">眉素材</option>
-          <option value="目素材">目素材</option>
-          <option value="鼻素材">鼻素材</option>
-          <option value="口素材">口素材</option>
-          <option value="顔色素材">顔色素材</option>
-          <option value="その他">その他</option>
-        </select>
-        <!-- その他が選択された場合の入力欄 -->
-        <input type="text" id="featureOtherInput" class="feature-other" placeholder="その他の特徴を入力">
-      </div>
-    </div>
-    <!-- 小さい説明文（セレクトグループ下） -->
-    <div class="explanation">
-      <p class="small">＊選択した情報がQRコードの上に出力されます。</p>
-    </div>
+    <!-- モバイル用：追加情報はメイン画面では非表示、代わりに下記モバイル保存ダイアログ内に表示 -->
+    <!-- 小さい説明文は削除（メイン画面） -->
+
     <div class="button-container">
       <button id="regenerate-btn">QRコードの再生成</button>
       <button id="save-btn-mobile">QRコードの保存</button>
     </div>
+    <!-- 体格表ボタン（スマホ用、ここに移動） -->
+    <button id="tableButton">体格表</button>
   </div>
 
   <div class="history">
@@ -482,18 +475,149 @@
     </div>
   </div>
 
-  <!-- スマホ用：保存時の選択ダイアログ（画像に選択情報を出力するか） -->
+  <!-- スマホ用：保存時の追加情報ダイアログ（画像に出力する情報） -->
   <div id="mobileSaveDialog" class="dialog-container">
-    <p class="title-medium">画像出力設定</p>
-    <p class="title-small">以下から画像に選択情報を出力するか選んでください。</p>
-    <select id="mobileOutputSelect">
-      <option value="with">出力する</option>
-      <option value="without">出力しない</option>
-    </select>
-    <div style="display: flex; gap: 2%;">
-      <button id="mobileSaveBtn">完了</button>
-      <button id="mobileCancelBtn" class="cancel-btn">キャンセル</button>
-    </div>
+    <p class="title-medium">画像出力追加情報</p>
+    <!-- 追加情報をここに表示（PC用と同じ内容） -->
+    <div class="additional-info">
+      <p class="mid">電波人間の情報を保存画像に追加（任意）</p>
+      <div class="selectGroup">
+        <div>
+          <strong>回避率</strong>
+          <select id="m_avoidanceSelect">
+            <option value="">選択してください</option>
+            <option value="回避0">回避0</option>
+            <option value="回避3+">回避3+</option>
+            <option value="回避3-">回避3-</option>
+            <option value="回避6">回避6</option>
+            <option value="回避10">回避10</option>
+            <option value="回避15">回避15</option>
+          </select>
+        </div>
+        <div>
+          <strong>体格</strong>
+          <select id="m_physiqueSelect">
+            <option value="">選択してください</option>
+            <option value="最速">最速</option>
+            <option value="準速">準速</option>
+            <option value="中間">中間</option>
+            <option value="準大">準大</option>
+            <option value="最大">最大</option>
+          </select>
+        </div>
+        <div>
+          <strong>色</strong>
+          <select id="m_colorSelect">
+            <option value="">選択してください</option>
+            <option value="黒">黒</option>
+            <option value="赤">赤</option>
+            <option value="青">青</option>
+            <option value="黄">黄</option>
+            <option value="橙">橙</option>
+            <option value="緑">緑</option>
+            <option value="水">水</option>
+            <option value="紫">紫</option>
+            <option value="白">白</option>
+            <option value="濃黒">濃黒</option>
+            <option value="濃赤">濃赤</option>
+            <option value="濃青">濃青</option>
+            <option value="濃黄">濃黄</option>
+            <option value="濃橙">濃橙</option>
+            <option value="濃緑">濃緑</option>
+            <option value="濃水">濃水</option>
+            <option value="濃紫">濃紫</option>
+            <option value="濃白">濃白</option>
+            <option value="薄黒">薄黒</option>
+            <option value="薄赤">薄赤</option>
+            <option value="薄青">薄青</option>
+            <option value="薄黄">薄黄</option>
+            <option value="薄橙">薄橙</option>
+            <option value="薄緑">薄緑</option>
+            <option value="薄水">薄水</option>
+            <option value="薄紫">薄紫</option>
+            <option value="薄白">薄白</option>
+          </select>
+        </div>
+        <div>
+          <strong>頭</strong>
+          <select id="m_headSelect">
+            <option value="">選択してください</option>
+            <option value="横楕円">横楕円</option>
+            <option value="石鹼">石鹼</option>
+            <option value="丸">丸</option>
+            <option value="三角">三角</option>
+            <option value="四角">四角</option>
+            <option value="縦楕円">縦楕円</option>
+          </select>
+        </div>
+        <div>
+          <strong>アンテナ</strong>
+          <select id="m_antennaSelect">
+            <option value="">選択してください</option>
+            <option value="アン無">アン無</option>
+            <option value="単体復活">単体復活</option>
+            <option value="単体回復">単体回復</option>
+            <option value="単体無敵">単体無敵</option>
+            <option value="避けにくい">避けにくい</option>
+            <option value="ノクダ">ノクダ</option>
+            <option value="治す">治す</option>
+            <option value="属性治す">属性治す</option>
+            <option value="興奮">興奮</option>
+            <option value="足元ガード">足元ガード</option>
+            <option value="遅くなれ">遅くなれ</option>
+            <option value="弱くなれ">弱くなれ</option>
+            <option value="やわくなれ">やわくなれ</option>
+            <option value="速くなれ">早くなれ</option>
+            <option value="強くなれ">強くなれ</option>
+            <option value="硬くなれ">硬くなれ</option>
+            <option value="かわしやすい">かわしやすい</option>
+            <option value="毒になれ">毒になれ</option>
+            <option value="目隠し">目隠し</option>
+            <option value="痺れされる">痺れされる</option>
+            <option value="眠らせる">眠らせる</option>
+            <option value="解毒">解毒</option>
+            <option value="痺れ取る">痺れ取る</option>
+            <option value="目覚める">目覚める</option>
+            <option value="単体火">単体火</option>
+            <option value="単体水">単体水</option>
+            <option value="単体電気">単体電気</option>
+            <option value="単体土">単体土</option>
+            <option value="単体風">単体風</option>
+            <option value="単体氷">単体氷</option>
+            <option value="単体闇">単体闇</option>
+            <option value="単体光">単体光</option>
+            <option value="3体火">3体火</option>
+            <option value="3体水">3体水</option>
+            <option value="3体電気">3体電気</option>
+            <option value="3体土">3体土</option>
+            <option value="3体風">3体風</option>
+            <option value="3体氷">3体氷</option>
+            <option value="3体風">3体闇</option>
+            <option value="3体風">3体光</option>
+          </select>
+        </div>
+        <div>
+          <strong>特徴</strong>
+          <select id="m_featureSelect">
+            <option value="">選択してください</option>
+            <option value="親子">親子</option>
+            <option value="双子">双子</option>
+            <option value="顔素材">顔素材</option>
+            <option value="髪素材">髪素材</option>
+            <option value="眉素材">眉素材</option>
+            <option value="目素材">目素材</option>
+            <option value="鼻素材">鼻素材</option>
+            <option value="口素材">口素材</option>
+            <option value="顔色素材">顔色素材</option>
+            <option value="その他">その他</option>
+          </select>
+          <input type="text" id="m_featureOtherInput" class="feature-other" placeholder="その他の特徴を入力">
+        </div>
+      </div>
+      <div style="display:flex; justify-content: center; gap: 10px; margin-top: 10px;">
+        <button id="mobileSaveBtn">完了</button>
+        <button id="mobileCancelBtn" class="cancel-btn">キャンセル</button>
+      </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
@@ -515,25 +639,36 @@
     const cancelBtn = document.getElementById('cancel-btn');
     const regenerateBtn = document.getElementById('regenerate-btn');
     const saveBtnMobile = document.getElementById('save-btn-mobile');
-    const featureSelect = document.getElementById('featureSelect');
-    const featureOtherInput = document.getElementById('featureOtherInput');
     const overlay = document.getElementById('overlay');
     const mobileSaveDialog = document.getElementById('mobileSaveDialog');
     const mobileSaveBtn = document.getElementById('mobileSaveBtn');
     const mobileCancelBtn = document.getElementById('mobileCancelBtn');
-    const mobileOutputSelect = document.getElementById('mobileOutputSelect');
+
+    const featureSelect = document.getElementById('featureSelect');
+    const featureOtherInput = document.getElementById('featureOtherInput');
+    const m_featureSelect = document.getElementById('m_featureSelect');
+    const m_featureOtherInput = document.getElementById('m_featureOtherInput');
+
     const tableButton = document.getElementById('tableButton');
     const tableDialog = document.getElementById('tableDialog');
     const closeTableDialog = document.getElementById('closeTableDialog');
 
     let isDialogVisible = false;
 
-    // 特徴セレクトの変更イベント
+    // 特徴セレクトの変更イベント（PC用）
     featureSelect.addEventListener('change', function() {
       if (this.value === "その他") {
         featureOtherInput.style.display = "block";
       } else {
         featureOtherInput.style.display = "none";
+      }
+    });
+    // 特徴セレクトの変更イベント（モバイル用）
+    m_featureSelect.addEventListener('change', function() {
+      if (this.value === "その他") {
+        m_featureOtherInput.style.display = "block";
+      } else {
+        m_featureOtherInput.style.display = "none";
       }
     });
 
@@ -564,18 +699,16 @@
       const listItem = document.createElement('li');
       listItem.innerHTML = `<img src="${qrData}" class="qr-code"> <br> ${qrString}`;
       listItem.addEventListener('click', () => {
-        // 過去のQRコードを保存されたデータで再表示
         QRCode.toCanvas(qrCanvas, qrCodeText, function (error) {
           if (error) console.error(error);
         });
-        // 履歴の生成番号から数値部分を取り出して表示
         const num = qrString.replace('生成No.', '');
         qrTextDisplay.textContent = `生成回数：${num}`;
       });
       historyList.insertBefore(listItem, historyList.firstChild);
     }
 
-    // PC用ダイアログ表示（従来）
+    // PC用ダイアログ表示
     function showSaveDialog() {
       filenameInput.value = '';
       overlay.style.display = 'block';
@@ -585,30 +718,27 @@
         isDialogVisible = true;
       }, 100);
     }
-
     function hideSaveDialog() {
       dialog.style.display = 'none';
       overlay.style.display = 'none';
       isDialogVisible = false;
     }
-
-    // モバイル用保存ダイアログ表示
+    // モバイル用ダイアログ表示：ここでは追加情報（PC用の追加情報）を表示する
     function showMobileSaveDialog() {
       overlay.style.display = 'block';
       setTimeout(() => {
         mobileSaveDialog.style.display = 'block';
+        // モバイル用追加情報内の各セレクト等、初期状態をリセットする場合は必要ならここで処理
         mobileSaveDialog.querySelector('select').focus();
         isDialogVisible = true;
       }, 100);
     }
-
     function hideMobileSaveDialog() {
       mobileSaveDialog.style.display = 'none';
       overlay.style.display = 'none';
       isDialogVisible = false;
     }
-
-    // テキストを指定の条件で改行する関数（文字数許容量を12字に変更）
+    // 改行処理（許容量12字）
     function wrapText(text, maxChars = 12) {
       let lines = [];
       while (text.length > maxChars) {
@@ -631,66 +761,72 @@
       return lines;
     }
 
-    // saveQRCode: outputTextフラグに応じてテキスト出力有無を切り替え
-    function saveQRCode(outputText) {
+    // saveQRCode: output追加情報は、PCの場合はmainの追加情報、モバイルの場合はmobileSaveDialog内の内容を利用
+    function saveQRCode() {
       let dataURL;
-      if (outputText) {
-        // 各セレクトボックスの値を取得し、空でないものを連結
-        const avoidance = document.getElementById('avoidanceSelect').value;
-        const physique = document.getElementById('physiqueSelect').value;
-        const color = document.getElementById('colorSelect').value;
-        const head = document.getElementById('headSelect').value;
-        const antenna = document.getElementById('antennaSelect').value;
-        let feature = document.getElementById('featureSelect').value;
+      // PCの場合は常に追加情報を出力（main画面の追加情報は表示されている）
+      // モバイルの場合、mobileSaveDialog内の追加情報の各値を使用
+      let avoidance, physique, color, head, antenna, feature;
+      if (window.matchMedia("(max-width: 768px) and (orientation: portrait)").matches) {
+        avoidance = document.getElementById('m_avoidanceSelect').value;
+        physique = document.getElementById('m_physiqueSelect').value;
+        color = document.getElementById('m_colorSelect').value;
+        head = document.getElementById('m_headSelect').value;
+        antenna = document.getElementById('m_antennaSelect').value;
+        feature = document.getElementById('m_featureSelect').value;
         if (feature === "その他") {
-          feature = featureOtherInput.value;
+          feature = document.getElementById('m_featureOtherInput').value;
         }
-        let parts = [];
-        if (avoidance) parts.push(avoidance);
-        if (physique) parts.push(physique);
-        if (color) parts.push(color);
-        if (head) parts.push(head);
-        if (antenna) parts.push(antenna);
-        if (feature) parts.push(feature);
-        const text = parts.join(" ");
-        
-        let wrappedLines = [];
-        if (text) {
-          wrappedLines = wrapText(text, 12);
-        }
-        const lineHeight = 30;
-        const textAreaHeight = wrappedLines.length * lineHeight;
-        const combinedCanvas = document.createElement('canvas');
-        combinedCanvas.width = qrCanvas.width;
-        combinedCanvas.height = qrCanvas.height + textAreaHeight;
-        const combinedCtx = combinedCanvas.getContext('2d');
-        if (text) {
-          combinedCtx.fillStyle = 'white';
-          combinedCtx.fillRect(0, 0, combinedCanvas.width, textAreaHeight);
-          combinedCtx.fillStyle = 'black';
-          combinedCtx.font = 'bold 16px Arial';
-          combinedCtx.textAlign = 'center';
-          combinedCtx.textBaseline = 'middle';
-          for (let i = 0; i < wrappedLines.length; i++) {
-            combinedCtx.fillText(wrappedLines[i], combinedCanvas.width / 2, lineHeight / 2 + i * lineHeight);
-          }
-        }
-        combinedCtx.drawImage(qrCanvas, 0, textAreaHeight);
-        dataURL = combinedCanvas.toDataURL();
       } else {
-        dataURL = qrCanvas.toDataURL();
+        avoidance = document.getElementById('avoidanceSelect').value;
+        physique = document.getElementById('physiqueSelect').value;
+        color = document.getElementById('colorSelect').value;
+        head = document.getElementById('headSelect').value;
+        antenna = document.getElementById('antennaSelect').value;
+        feature = document.getElementById('featureSelect').value;
+        if (feature === "その他") {
+          feature = document.getElementById('featureOtherInput').value;
+        }
       }
-      // ファイル名はPCではダイアログから、モバイルでは自動（例：currentQRData）を使用
+      let parts = [];
+      if (avoidance) parts.push(avoidance);
+      if (physique) parts.push(physique);
+      if (color) parts.push(color);
+      if (head) parts.push(head);
+      if (antenna) parts.push(antenna);
+      if (feature) parts.push(feature);
+      const text = parts.join(" ");
+      
+      let wrappedLines = [];
+      if (text) {
+        wrappedLines = wrapText(text, 12);
+      }
+      const lineHeight = 30;
+      const textAreaHeight = wrappedLines.length * lineHeight;
+      const combinedCanvas = document.createElement('canvas');
+      combinedCanvas.width = qrCanvas.width;
+      combinedCanvas.height = qrCanvas.height + textAreaHeight;
+      const combinedCtx = combinedCanvas.getContext('2d');
+      if (text) {
+        combinedCtx.fillStyle = 'white';
+        combinedCtx.fillRect(0, 0, combinedCanvas.width, textAreaHeight);
+        combinedCtx.fillStyle = 'black';
+        combinedCtx.font = 'bold 16px Arial';
+        combinedCtx.textAlign = 'center';
+        combinedCtx.textBaseline = 'middle';
+        for (let i = 0; i < wrappedLines.length; i++) {
+          combinedCtx.fillText(wrappedLines[i], combinedCanvas.width / 2, lineHeight / 2 + i * lineHeight);
+        }
+      }
+      combinedCtx.drawImage(qrCanvas, 0, textAreaHeight);
       let fileName = currentQRData;
-      // PCの場合、もしファイル名入力があるならそちらを使用
       if (dialog.style.display === 'block' && filenameInput.value.trim() !== '') {
         fileName = filenameInput.value.trim();
       }
       const a = document.createElement('a');
-      a.href = dataURL;
+      a.href = combinedCanvas.toDataURL();
       a.download = fileName + '.png';
       a.click();
-      // 隠すダイアログ
       if (mobileSaveDialog.style.display === 'block') {
         hideMobileSaveDialog();
       } else {
@@ -701,36 +837,27 @@
     saveBtn.addEventListener('click', saveQRCode);
     cancelBtn.addEventListener('click', hideSaveDialog);
     regenerateBtn.addEventListener('click', generateQRCode);
-    saveBtnMobile.addEventListener('click', function() {
-      // スマホの場合はファイル名ダイアログの代わりにmobileSaveDialogを表示
-      showMobileSaveDialog();
-    });
-    mobileSaveBtn.addEventListener('click', function() {
-      const outputOption = mobileOutputSelect.value; // "with" または "without"
-      saveQRCode(outputOption === "with");
-    });
+    saveBtnMobile.addEventListener('click', showMobileSaveDialog);
+    mobileSaveBtn.addEventListener('click', saveQRCode);
     mobileCancelBtn.addEventListener('click', hideMobileSaveDialog);
 
     window.addEventListener('keydown', function (e) {
       const activeTag = document.activeElement.tagName;
-      // 入力欄またはセレクト要素がフォーカスされている場合は操作をロック
       if (activeTag === 'INPUT' || activeTag === 'SELECT') {
         return;
       }
       if (isDialogVisible && e.key === 'Enter') {
-        // PC用ダイアログが表示されている場合
-        saveQRCode(true);
+        saveQRCode();
       } else if (e.key === 'Enter' || e.key === ' ') {
         generateQRCode();
       } else if (e.key === 'S' || e.key === 's') {
-        // スマホではsaveBtnMobileが使用される
         showSaveDialog();
       }
     });
 
     generateQRCode();
 
-    // 体格表モーダル（スマホ用）操作
+    // 体格表モーダル操作（スマホ用）
     tableButton.addEventListener('click', function() {
       overlay.style.display = 'block';
       tableDialog.style.display = 'block';
