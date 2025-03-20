@@ -1,5 +1,5 @@
 ## 電波人間用QRコード生成ツール
--  ページ:　(https://subcaptaintsubasa.github.io/denpa_qrCreater/)
+-  URL:　https://subcaptaintsubasa.github.io/denpa_qrCreater/
 - 長さが126のランダムな文字列をQRコードに変換するツールです
 - 文字列の長さを127以上にすると、iOSとAndroidで出現する電波人間が異なります
 
