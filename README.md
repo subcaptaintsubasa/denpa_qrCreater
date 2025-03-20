@@ -20,10 +20,7 @@
 -   連絡先：「副キャプテン翼」Xアカウント（[@subcaptain_yfm](https://x.com/subcaptain_yfm) ）（鍵垢になってる場合もあります。その場合はフォローリクエストして下さい。）、Disscord（[@fukuyakaputenyoku](https://discordapp.com/users/1109485950008045579) ）、またはGit HubのIssuesにお願いします。
 
 ### 貢献
-バグ報告や機能追加のリクエストも、上記連絡先のいずれかにお願いします。
+バグ報告や機能追加のリクエスト等も、上記連絡先のいずれかにお願いします。
 
 ### ライセンス
-MITライセンス
-
-### 使用ライブラリ
-[nayuki/QR-Code-generator](https://github.com/nayuki/QR-Code-generator)を使用してQRコードを生成しています
+MITライセンス (LICENSEファイルに記載)
