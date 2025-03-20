@@ -17,7 +17,7 @@
 -   QRコードは、X（Twitter）やDiscordで自由にシェアして下さい。
 -   ＊サイトの利用の際は、商用利用しないこと（QRコードの販売等）と無断転載しないことを遵守して下さい。
 -   Youtubeで紹介する際や、まとめサイト等のWebサイトに載せる場合、コードを編集するなどして新たにサイトを作成する場合等は相談頂ければ許可します。
--   連絡先：Xアカウント（副キャプテン翼 [@subcaptain_yfm](https://x.com/subcaptain_yfm) ）（鍵垢になってる場合もあります。その場合はフォローリクエストして下さい。）、Disscord（副キャプテン翼　@fukuyakaputenyoku　discordapp.com/users/1109485950008045579 ）、またはGit HubのIssuesにお願いします。
+-   連絡先：Xアカウント（副キャプテン翼 [@subcaptain_yfm](https://x.com/subcaptain_yfm) ）（鍵垢になってる場合もあります。その場合はフォローリクエストして下さい。）、Disscord（副キャプテン翼　@fukuyakaputenyoku　(https://discordapp.com/users/1109485950008045579) ）、またはGit HubのIssuesにお願いします。
 
 ### 貢献
 バグ報告や機能追加のリクエストも、上記連絡先のいずれかにお願いします。
