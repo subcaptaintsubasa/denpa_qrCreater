@@ -171,7 +171,7 @@
     .button-container {
       display: none;
     }
-    /* オーバーレイ（ダイアログ・体格表モーダル表示時に背景操作を防止） */
+    /* オーバーレイ（ダイアログ・モーダル表示時に背景操作を防止） */
     #overlay {
       display: none;
       position: fixed;
@@ -200,7 +200,7 @@
       right: 10px;
       padding: 5px 10px;
     }
-    /* スマホ専用のボタン群（体格表ボタンおよびモバイル用保存は、PCでは非表示） */
+    /* スマホ専用ボタン群（体格表ボタン、モバイル用保存ダイアログなどはPCでは非表示） */
     #tableButton,
     .mobile-explanation,
     .mobile-selectGroup,
@@ -222,14 +222,18 @@
         justify-content: center;
         margin-top: 10px;
       }
-      /* スマホ用：体格表ボタン、説明文および選択グループを表示 */
+      /* スマホ用：体格表ボタン、説明文、選択グループおよび補助説明文を表示 */
       #tableButton,
       .mobile-explanation,
       .mobile-selectGroup,
       .mobile-explanation-small {
         display: block;
       }
-      /* 並び順（order）を設定 */
+      /* 各選択ボックス間に余白を追加 */
+      .mobile-selectGroup > div {
+        margin-bottom: 10px;
+      }
+      /* 表示順序の調整 */
       .button-container { order: 1; }
       #tableButton { order: 2; }
       .mobile-explanation { order: 3; }
@@ -273,8 +277,41 @@
     </table>
   </div>
 
-  <!-- 体格表ボタン（スマホ専用、下部に配置するためqr-container内に移動） -->
-  <!-- 以下のボタンはPCでは非表示 -->
+  <!-- スマホ用：体格表ボタン（PCでは非表示） -->
+  <button id="tableButton">体格表</button>
+
+  <!-- 体格表ダイアログ（スマホ用） -->
+  <div id="tableDialog">
+    <button id="closeTableDialog">閉じる</button>
+    <h2 class="title-medium">体格表（回避0のみ）</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>アンテナ</th>
+          <th>最大</th>
+          <th>最速</th>
+          <th>備考</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>アン無</td><td>40</td><td>29</td><td></td></tr>
+        <tr><td>単体攻撃</td><td>33</td><td>24</td><td>火水:HP+1<br>風光:回避+1</td></tr>
+        <tr><td>3体攻撃</td><td>35</td><td>26</td><td>火水:HP+1<br>風光:回避+1</td></tr>
+        <tr><td>ノクダ</td><td>38</td><td>28</td><td>回避+1</td></tr>
+        <tr><td>単体回復</td><td>41</td><td>31</td><td></td></tr>
+        <tr><td>単体復活</td><td>42</td><td>32</td><td></td></tr>
+        <tr><td>痺れとる<br>目覚める</td><td>43</td><td>33</td><td></td></tr>
+        <tr><td>解毒<br>属性治す<br>全部治す</td><td>42</td><td>32</td><td></td></tr>
+        <tr><td>単体増強</td><td>36</td><td>27</td><td>かわしやすい<br>:回避+2</td></tr>
+        <tr><td>蓄える</td><td>42</td><td>32</td><td></td></tr>
+        <tr><td>興奮</td><td>37</td><td>27</td><td></td></tr>
+        <tr><td>弱体系</td><td>37</td><td>27</td><td>皆かわしにくい<br>:回避+4</td></tr>
+        <tr><td>無敵</td><td>42</td><td>32</td><td></td></tr>
+        <tr><td>足元ガード</td><td>35</td><td>25</td><td>回避+1</td></tr>
+      </tbody>
+    </table>
+  </div>
+
   <div class="qr-container">
     <div class="qr-message">
       <p class="title-large">電波人間用QRコード生成サイト</p>
@@ -287,9 +324,7 @@
       <button id="regenerate-btn">QRコードの再生成</button>
       <button id="save-btn-mobile">QRコードの保存</button>
     </div>
-    <!-- スマホ用：体格表ボタン -->
-    <button id="tableButton">体格表</button>
-    <!-- スマホ用：追加情報（説明文＋選択グループ＋補助説明文） -->
+    <!-- スマホ用：体格表ボタン、追加情報説明文、選択グループ、補助説明文 -->
     <div class="mobile-explanation">
       <p class="mid">電波人間の情報を保存画像に追加（任意）</p>
     </div>
@@ -438,11 +473,16 @@
     </ul>
   </div>
 
-  <!-- PC用保存用ファイル名入力ダイアログ -->
+  <!-- PC用保存用ファイル名入力ダイアログ（出力選択ボックス追加） -->
   <div id="dialog" class="dialog-container">
     <p class="title-medium">ファイル名を入力</p>
     <p class="title-small">*拡張子は不要です。<br>ファイル名を入力しない場合はそのままENTERを押してください。</p>
     <input type="text" id="filename-input" placeholder="ファイル名を入力">
+    <p class="title-small">画像に出力する情報：</p>
+    <select id="pcOutputSelect">
+      <option value="with">出力する</option>
+      <option value="without">出力しない</option>
+    </select>
     <div style="display: flex; gap: 2%;">
       <button id="save-btn">完了</button>
       <button id="cancel-btn" class="cancel-btn">キャンセル</button>
@@ -464,6 +504,7 @@
 
     const dialog = document.getElementById('dialog');
     const filenameInput = document.getElementById('filename-input');
+    const pcOutputSelect = document.getElementById('pcOutputSelect');
     const saveBtn = document.getElementById('save-btn');
     const cancelBtn = document.getElementById('cancel-btn');
     const regenerateBtn = document.getElementById('regenerate-btn');
@@ -473,7 +514,7 @@
     const overlay = document.getElementById('overlay');
     const tableButton = document.getElementById('tableButton');
     const tableDialog = document.getElementById('tableDialog');
-    const closeTableDialog = document.getElementById('closeTableDialog'); // ※テーブルダイアログ内の閉じるボタン
+    const closeTableDialog = document.getElementById('closeTableDialog');
 
     let isDialogVisible = false;
 
@@ -522,7 +563,7 @@
       historyList.insertBefore(listItem, historyList.firstChild);
     }
 
-    // PC用ダイアログ表示（従来）
+    // PC用ダイアログ表示
     function showSaveDialog() {
       filenameInput.value = '';
       overlay.style.display = 'block';
@@ -539,7 +580,30 @@
       isDialogVisible = false;
     }
 
-    // 保存処理（スマホ、PC共通。スマホではメッセージボックスは表示せず即保存）
+    // テキスト改行関数（許容量12字）
+    function wrapText(text, maxChars = 12) {
+      let lines = [];
+      while (text.length > maxChars) {
+        let breakPos = -1;
+        let searchStart = Math.max(0, maxChars - 3);
+        let searchEnd = Math.min(text.length, maxChars + 3);
+        for (let i = searchEnd - 1; i >= searchStart; i--) {
+          if (text.charAt(i) === ' ') {
+            breakPos = i;
+            break;
+          }
+        }
+        if (breakPos === -1) {
+          breakPos = maxChars;
+        }
+        lines.push(text.substring(0, breakPos).trim());
+        text = text.substring(breakPos).trim();
+      }
+      if (text.length > 0) lines.push(text);
+      return lines;
+    }
+
+    // 保存処理：outputTextは出力する情報の有無を決定（true=出力する）
     function saveQRCode(outputText) {
       let dataURL;
       if (outputText) {
@@ -549,18 +613,17 @@
         const head = document.getElementById('headSelect').value;
         const antenna = document.getElementById('antennaSelect').value;
         let feature = document.getElementById('featureSelect').value;
-        if(feature === "その他") {
+        if (feature === "その他") {
           feature = featureOtherInput.value;
         }
         let parts = [];
-        if(avoidance) parts.push(avoidance);
-        if(physique) parts.push(physique);
-        if(color) parts.push(color);
-        if(head) parts.push(head);
-        if(antenna) parts.push(antenna);
-        if(feature) parts.push(feature);
+        if (avoidance) parts.push(avoidance);
+        if (physique) parts.push(physique);
+        if (color) parts.push(color);
+        if (head) parts.push(head);
+        if (antenna) parts.push(antenna);
+        if (feature) parts.push(feature);
         const text = parts.join(" ");
-        
         let wrappedLines = [];
         if (text) {
           wrappedLines = wrapText(text, 12);
@@ -588,6 +651,7 @@
         dataURL = qrCanvas.toDataURL();
       }
       let fileName = currentQRData;
+      // PC用ダイアログの場合、ファイル名入力欄があるなら使用
       if (dialog.style.display === 'block' && filenameInput.value.trim() !== '') {
         fileName = filenameInput.value.trim();
       }
@@ -598,21 +662,35 @@
       hideSaveDialog();
     }
 
-    saveBtn.addEventListener('click', saveQRCode);
+    saveBtn.addEventListener('click', function() {
+      // PC用：pcOutputSelectの値で出力フラグを判断
+      const outputFlag = pcOutputSelect.value === "with";
+      saveQRCode(outputFlag);
+    });
     cancelBtn.addEventListener('click', hideSaveDialog);
     regenerateBtn.addEventListener('click', generateQRCode);
-    // スマホ用保存ボタン：即時保存（常に出力テキストあり）
+    // スマホ用保存ボタン：即保存（常に情報出力する＝true）
     saveBtnMobile.addEventListener('click', function() {
       saveQRCode(true);
     });
 
-    window.addEventListener('keydown', function (e) {
+    // PC用：ファイル名入力欄でENTERキーで保存実行
+    filenameInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        const outputFlag = pcOutputSelect.value === "with";
+        saveQRCode(outputFlag);
+      }
+    });
+
+    window.addEventListener('keydown', function(e) {
       const activeTag = document.activeElement.tagName;
+      // 入力欄・セレクト要素がフォーカスされている場合は操作をロック
       if (activeTag === 'INPUT' || activeTag === 'SELECT') {
         return;
       }
       if (isDialogVisible && e.key === 'Enter') {
-        saveQRCode(true);
+        const outputFlag = pcOutputSelect.value === "with";
+        saveQRCode(outputFlag);
       } else if (e.key === 'Enter' || e.key === ' ') {
         generateQRCode();
       } else if (e.key === 'S' || e.key === 's') {
@@ -622,12 +700,11 @@
 
     generateQRCode();
 
-    // 体格表モーダル操作（スマホ専用）
+    // 体格表モーダル操作（スマホ用）
     tableButton.addEventListener('click', function() {
       overlay.style.display = 'block';
       tableDialog.style.display = 'block';
     });
-    // 体格表モーダル内の閉じるボタン（#closeTableDialog）のクリックイベントを追加
     if(document.getElementById('closeTableDialog')){
       document.getElementById('closeTableDialog').addEventListener('click', function() {
         tableDialog.style.display = 'none';
