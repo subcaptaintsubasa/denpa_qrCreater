@@ -207,10 +207,16 @@
         justify-content: space-around;
         width: 100%;
       }
-      /* セレクトグループと説明文を下に移動 */
+      /* セレクトグループと説明文を下部へ移動 */
       .selectGroup,
       .explanation {
         width: 100%;
+      }
+    }
+    /* PC（画面幅768px以上）ではボタン非表示 */
+    @media (min-width: 768px) {
+      .button-container {
+        display: none;
       }
     }
   </style>
@@ -258,13 +264,13 @@
     </div>
     <canvas id="qr-code-canvas" class="qr-code"></canvas>
     <p id="qr-text">生成回数：1</p>
-    <!-- ボタン行（スマホ時は3つボタン横並び、PCでは表示されない） -->
+    <!-- ボタン行（スマホ時は3つボタン横並び、PCでは非表示） -->
     <div class="button-container">
       <button id="regenerate-btn">再生成</button>
       <button id="save-btn-mobile">保存</button>
-      <button id="table-btn" style="display:none;">体格表</button>
+      <button id="table-btn">体格表</button>
     </div>
-    <!-- セレクトグループおよび説明文（PC：そのまま表示、スマホ：下部へ移動） -->
+    <!-- セレクトグループおよび説明文 -->
     <div class="explanation">
       <p class="mid">電波人間の情報を保存画像に追加（任意）</p>
     </div>
@@ -652,12 +658,19 @@
     regenerateBtn.addEventListener('click', generateQRCode);
     saveBtnMobile.addEventListener('click', showSaveDialog);
     // スマホの体格表ボタン
-    tableBtn && tableBtn.addEventListener('click', showTableDialog);
+    if (tableBtn) {
+      tableBtn.addEventListener('click', showTableDialog);
+    }
     closeTableBtn.addEventListener('click', hideTableDialog);
 
     window.addEventListener('keydown', function (e) {
-      // INPUTまたはSELECTにフォーカスされている場合はキー操作を無効化
       const activeTag = document.activeElement.tagName;
+      // ファイル名入力中の場合は、ENTERキーで保存を実行
+      if (document.activeElement.id === 'filename-input' && e.key === 'Enter') {
+        saveQRCode();
+        return;
+      }
+      // INPUTまたはSELECTにフォーカスされている場合はキー操作を無効化
       if (activeTag === 'INPUT' || activeTag === 'SELECT') {
         return;
       }
@@ -670,11 +683,6 @@
         showSaveDialog();
       }
     });
-
-    // スマホ時は体格表ボタンを表示
-    if (window.innerWidth < 768) {
-      document.getElementById('table-btn').style.display = 'inline-block';
-    }
 
     generateQRCode();
   </script>
