@@ -63,21 +63,23 @@
     }
     @media (max-width: 768px) {
       .qr-code-container {
-        padding-top: 100%;
+        padding-bottom: 100%; /* 高さ＝幅になるように */
       }
     }
-    /* キャンバスはコンテナ内で絶対配置 */
+    /* キャンバスはコンテナ内で絶対配置し中央寄せ */
     #qr-code-canvas {
       position: relative;
       width: 150px;
       height: 150px;
       margin-top: 20px;
+      display: block;
     }
     @media (max-width: 768px) {
       #qr-code-canvas {
         position: absolute;
         top: 0;
-        left: 0;
+        left: 50%;
+        transform: translateX(-50%);
         width: 100%;
         height: 100%;
         margin-top: 0;
@@ -594,7 +596,7 @@
     function addToHistory(qrData, qrString, qrCodeText) {
       savedQRs.push({ qrData, qrString, qrCodeText });
       const listItem = document.createElement('li');
-      listItem.innerHTML = `<img src="${qrData}" class="qr-code"> <span>${qrString}</span>`;
+      listItem.innerHTML = `<img src="${qrData}" class="qr-code"><span>${qrString}</span>`;
       listItem.addEventListener('click', () => {
         QRCode.toCanvas(qrCanvas, qrCodeText, function (error) {
           if (error) console.error(error);
