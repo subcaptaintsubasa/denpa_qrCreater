@@ -16,6 +16,7 @@
       height: 100vh;
       flex-wrap: wrap;
     }
+    /* PC用体格表（スマホでは非表示） */
     .table-container {
       width: 100%;
       max-width: 400px;
@@ -70,7 +71,7 @@
     }
     .selectGroup {
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: row;
       justify-content: center;
       gap: 10px;
       margin-top: 10px;
@@ -79,6 +80,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      /* PC用：各ボックス間に十分な余白 */
+      margin: 0 10px;
     }
     .selectGroup select {
       padding: 5px;
@@ -117,71 +120,7 @@
       height: 40px;
       margin-right: 10px;
     }
-    .dialog-container {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: #f0f8ff;
-      padding: 20px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      border-radius: 8px;
-      z-index: 201;
-      max-width: 300px;
-      width: 100%;
-    }
-    .dialog-container input,
-    .dialog-container select {
-      padding: 10px;
-      margin-bottom: 10px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    .dialog-container button {
-      padding: 10px;
-      width: 48%;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-right: 2%;
-    }
-    .dialog-container button:hover {
-      background-color: #45a049;
-    }
-    .dialog-container .cancel-btn {
-      background-color: #f44336;
-    }
-    .dialog-container .cancel-btn:hover {
-      background-color: #e53935;
-    }
-    .title-large {
-      font-size: 30px;
-      font-weight: bold;
-    }
-    .title-medium {
-      font-size: 22px;
-      font-weight: bold;
-    }
-    .title-small {
-      font-size: 14px;
-    }
-    .button-container {
-      display: none;
-    }
-    /* オーバーレイ（ダイアログ・モーダル表示時に背景操作を防止） */
-    #overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.3);
-      z-index: 200;
-    }
-    /* 体格表モーダル（スマホ専用） */
+    /* ダイアログ・モーダル（体格表用） */
     #tableDialog {
       display: none;
       position: fixed;
@@ -200,15 +139,31 @@
       right: 10px;
       padding: 5px 10px;
     }
-    /* スマホ専用ボタン群（体格表ボタン、モバイル用保存ダイアログなどはPCでは非表示） */
-    #tableButton,
-    .mobile-explanation,
-    .mobile-selectGroup,
-    .mobile-explanation-small {
+    /* オーバーレイ（ダイアログ・モーダル表示時に背景操作を防止） */
+    #overlay {
       display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.3);
+      z-index: 200;
     }
-    /* スマホ（縦画面）用のレイアウト調整 */
+    .button-container {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    /* PC用：画像に出力する情報選択ボックス */
+    .pc-output {
+      display: block;
+      margin-top: 10px;
+    }
+    /* スマホ用表示調整 */
     @media (max-width: 768px) and (orientation: portrait) {
+      /* PC用体格表は非表示 */
+      .table-container { display: none; }
       .qr-container {
         width: 100%;
       }
@@ -216,29 +171,31 @@
         width: 100%;
         height: auto;
       }
-      .button-container {
+      /* ボタン配置：QRコード操作ボタンの下に体格表ボタンを表示 */
+      .button-container { order: 1; }
+      #tableButton { order: 2; margin-top: 10px; }
+      /* 追加情報説明と選択グループはスマホ用 */
+      .mobile-explanation { order: 3; }
+      .mobile-selectGroup { order: 4; }
+      .mobile-explanation-small { order: 5; }
+      /* スマホ用：画像に出力する情報選択ボックスは非表示 */
+      .pc-output { display: none; }
+      /* スマホ用：選択グループを縦並びに */
+      .mobile-selectGroup {
         display: flex;
+        flex-direction: column;
         gap: 10px;
-        justify-content: center;
-        margin-top: 10px;
+        align-items: center;
       }
-      /* スマホ用：体格表ボタン、説明文、選択グループおよび補助説明文を表示 */
+    }
+    /* PCではスマホ専用要素は非表示 */
+    @media (min-width: 769px) {
       #tableButton,
       .mobile-explanation,
       .mobile-selectGroup,
       .mobile-explanation-small {
-        display: block;
+        display: none;
       }
-      /* 各選択ボックス間に余白を追加 */
-      .mobile-selectGroup > div {
-        margin-bottom: 10px;
-      }
-      /* 表示順序の調整 */
-      .button-container { order: 1; }
-      #tableButton { order: 2; }
-      .mobile-explanation { order: 3; }
-      .mobile-selectGroup { order: 4; }
-      .mobile-explanation-small { order: 5; }
     }
   </style>
 </head>
@@ -322,9 +279,17 @@
     <p id="qr-text">生成回数：1</p>
     <div class="button-container">
       <button id="regenerate-btn">QRコードの再生成</button>
-      <button id="save-btn-mobile">QRコードの保存</button>
+      <button id="save-btn">QRコードの保存</button>
     </div>
-    <!-- スマホ用：体格表ボタン、追加情報説明文、選択グループ、補助説明文 -->
+    <!-- PC用：画像に出力する情報選択ボックス（PCのみ表示） -->
+    <div class="pc-output">
+      <p class="title-small">画像に出力する情報：</p>
+      <select id="pcOutputSelect">
+        <option value="with">出力する</option>
+        <option value="without">出力しない</option>
+      </select>
+    </div>
+    <!-- スマホ用：追加情報（説明文＋選択グループ＋補助説明文） -->
     <div class="mobile-explanation">
       <p class="mid">電波人間の情報を保存画像に追加（任意）</p>
     </div>
@@ -473,21 +438,7 @@
     </ul>
   </div>
 
-  <!-- PC用保存用ファイル名入力ダイアログ（出力選択ボックス追加） -->
-  <div id="dialog" class="dialog-container">
-    <p class="title-medium">ファイル名を入力</p>
-    <p class="title-small">*拡張子は不要です。<br>ファイル名を入力しない場合はそのままENTERを押してください。</p>
-    <input type="text" id="filename-input" placeholder="ファイル名を入力">
-    <p class="title-small">画像に出力する情報：</p>
-    <select id="pcOutputSelect">
-      <option value="with">出力する</option>
-      <option value="without">出力しない</option>
-    </select>
-    <div style="display: flex; gap: 2%;">
-      <button id="save-btn">完了</button>
-      <button id="cancel-btn" class="cancel-btn">キャンセル</button>
-    </div>
-  </div>
+  <!-- PC用保存用ダイアログは削除（保存ボタン押下時は即保存） -->
 
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <script>
@@ -502,21 +453,16 @@
     qrCanvas.width = qrSize;
     qrCanvas.height = qrSize;
 
-    const dialog = document.getElementById('dialog');
-    const filenameInput = document.getElementById('filename-input');
-    const pcOutputSelect = document.getElementById('pcOutputSelect');
-    const saveBtn = document.getElementById('save-btn');
-    const cancelBtn = document.getElementById('cancel-btn');
-    const regenerateBtn = document.getElementById('regenerate-btn');
-    const saveBtnMobile = document.getElementById('save-btn-mobile');
-    const featureSelect = document.getElementById('featureSelect');
-    const featureOtherInput = document.getElementById('featureOtherInput');
     const overlay = document.getElementById('overlay');
     const tableButton = document.getElementById('tableButton');
     const tableDialog = document.getElementById('tableDialog');
     const closeTableDialog = document.getElementById('closeTableDialog');
 
-    let isDialogVisible = false;
+    const featureSelect = document.getElementById('featureSelect');
+    const featureOtherInput = document.getElementById('featureOtherInput');
+    const pcOutputSelect = document.getElementById('pcOutputSelect');
+
+    let isDialogVisible = false; // モーダル表示中か（体格表モーダルなど）
 
     // 特徴セレクトの変更イベント
     featureSelect.addEventListener('change', function() {
@@ -542,7 +488,7 @@
       const qrCodeText = generateRandomString(126);
       QRCode.toCanvas(qrCanvas, qrCodeText, function (error) {
         if (error) console.error(error);
-        currentQRData = qrCodeText; // 現在のQRコードデータを保持
+        currentQRData = qrCodeText;
         qrTextDisplay.textContent = `生成回数：${generationCount}`;
         addToHistory(qrCanvas.toDataURL(), `生成No.${generationCount}`, qrCodeText);
         generationCount++;
@@ -561,23 +507,6 @@
         qrTextDisplay.textContent = `生成回数：${num}`;
       });
       historyList.insertBefore(listItem, historyList.firstChild);
-    }
-
-    // PC用ダイアログ表示
-    function showSaveDialog() {
-      filenameInput.value = '';
-      overlay.style.display = 'block';
-      setTimeout(() => {
-        dialog.style.display = 'block';
-        filenameInput.focus();
-        isDialogVisible = true;
-      }, 100);
-    }
-
-    function hideSaveDialog() {
-      dialog.style.display = 'none';
-      overlay.style.display = 'none';
-      isDialogVisible = false;
     }
 
     // テキスト改行関数（許容量12字）
@@ -603,7 +532,7 @@
       return lines;
     }
 
-    // 保存処理：outputTextは出力する情報の有無を決定（true=出力する）
+    // 保存処理：outputTextフラグにより、画像上部に選択情報を出力するか決定
     function saveQRCode(outputText) {
       let dataURL;
       if (outputText) {
@@ -650,65 +579,55 @@
       } else {
         dataURL = qrCanvas.toDataURL();
       }
-      let fileName = currentQRData;
-      // PC用ダイアログの場合、ファイル名入力欄があるなら使用
-      if (dialog.style.display === 'block' && filenameInput.value.trim() !== '') {
-        fileName = filenameInput.value.trim();
-      }
+      // ファイル名は自動的にcurrentQRDataを使用
+      const fileName = currentQRData;
       const a = document.createElement('a');
       a.href = dataURL;
       a.download = fileName + '.png';
       a.click();
-      hideSaveDialog();
     }
 
-    saveBtn.addEventListener('click', function() {
-      // PC用：pcOutputSelectの値で出力フラグを判断
-      const outputFlag = pcOutputSelect.value === "with";
-      saveQRCode(outputFlag);
-    });
-    cancelBtn.addEventListener('click', hideSaveDialog);
-    regenerateBtn.addEventListener('click', generateQRCode);
-    // スマホ用保存ボタン：即保存（常に情報出力する＝true）
-    saveBtnMobile.addEventListener('click', function() {
-      saveQRCode(true);
-    });
-
-    // PC用：ファイル名入力欄でENTERキーで保存実行
-    filenameInput.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
+    document.getElementById('regenerate-btn').addEventListener('click', generateQRCode);
+    document.getElementById('save-btn').addEventListener('click', function() {
+      // PCの場合はpcOutputSelectの値で出力するか判定
+      if (window.innerWidth > 768) {
         const outputFlag = pcOutputSelect.value === "with";
         saveQRCode(outputFlag);
+      } else {
+        // スマホの場合は常に情報出力する
+        saveQRCode(true);
       }
     });
 
+    // キー操作：入力欄またはセレクト要素、またはモーダル表示中ならロック
     window.addEventListener('keydown', function(e) {
       const activeTag = document.activeElement.tagName;
-      // 入力欄・セレクト要素がフォーカスされている場合は操作をロック
       if (activeTag === 'INPUT' || activeTag === 'SELECT') {
         return;
       }
-      if (isDialogVisible && e.key === 'Enter') {
-        const outputFlag = pcOutputSelect.value === "with";
-        saveQRCode(outputFlag);
-      } else if (e.key === 'Enter' || e.key === ' ') {
+      if (isDialogVisible) {
+        return;
+      }
+      if (e.key === 'Enter' || e.key === ' ') {
         generateQRCode();
       } else if (e.key === 'S' || e.key === 's') {
-        showSaveDialog();
+        saveQRCode(window.innerWidth > 768 ? (pcOutputSelect.value === "with") : true);
       }
     });
 
     generateQRCode();
 
-    // 体格表モーダル操作（スマホ用）
+    // 体格表モーダル操作（スマホ専用）
     tableButton.addEventListener('click', function() {
       overlay.style.display = 'block';
       tableDialog.style.display = 'block';
+      isDialogVisible = true;
     });
     if(document.getElementById('closeTableDialog')){
       document.getElementById('closeTableDialog').addEventListener('click', function() {
         tableDialog.style.display = 'none';
         overlay.style.display = 'none';
+        isDialogVisible = false;
       });
     }
   </script>
