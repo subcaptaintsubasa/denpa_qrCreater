@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <!-- Google Tag Manager -->
+  <!-- Google tag (gtag.js) をここに追加 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HCW9PSXFWH"></script>
   <script>
-    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-PT2D2W5N');
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-HCW9PSXFWH');
   </script>
-  <!-- End Google Tag Manager -->
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>電波人間用ランダムQRコード生成サイト</title>
@@ -252,10 +253,6 @@
   </style>
 </head>
 <body>
-  <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PT2D2W5N"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
   <!-- オーバーレイ -->
   <div id="overlay"></div>
   
@@ -302,7 +299,7 @@
     <div class="button-container">
       <button id="regenerate-btn">再生成</button>
       <button id="save-btn-mobile">保存</button>
-      <!-- ※PC表示時は「体格表」ボタンを非表示にする -->
+      <!-- PC表示時は「体格表」ボタンを非表示（CSSで制御） -->
       <button id="table-btn">体格表</button>
     </div>
     <!-- セレクトグループおよび説明文 -->
