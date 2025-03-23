@@ -7,7 +7,6 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-HCW9PSXFWH');
   </script>
 
@@ -117,16 +116,22 @@
       max-height: 400px;
       overflow-y: auto;
     }
+    /* 履歴リストの各項目を横並びにする */
     .history li {
       display: flex;
       align-items: center;
       margin-bottom: 10px;
       cursor: pointer;
+      gap: 10px;
     }
-    .history img {
+    .history li img.qr-code {
       width: 40px;
       height: 40px;
-      margin-right: 10px;
+    }
+    .history li .history-text {
+      /* テキストが画像の横に表示されるように */
+      font-size: 14px;
+      white-space: nowrap;
     }
     .button-container {
       margin-top: 10px;
@@ -144,6 +149,15 @@
     @media (min-width: 1024px) {
       #table-btn {
         display: none;
+      }
+    }
+    /* タブレット横画面時の体格表・履歴の幅調整 */
+    @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+      .table-container {
+        width: 50%;
+      }
+      .history {
+        width: 75%;
       }
     }
     /* ダイアログ（保存用および体格表用） */
@@ -208,7 +222,6 @@
       background: rgba(0,0,0,0.3);
       z-index: 100;
     }
-
     /* スマホ・タブレット【縦画面】用：ポートレート */
     @media (orientation: portrait) {
       .table-container {
@@ -231,7 +244,6 @@
         width: 100%;
       }
     }
-
     /* タブレット【横画面】およびPC用：ランドスケープ */
     @media (orientation: landscape) {
       .table-container {
@@ -552,10 +564,12 @@
       });
     }
 
+    // 履歴表示のHTMLを修正：テキストと画像を入れ替え、横並びにする
     function addToHistory(qrData, qrString, qrCodeText) {
       savedQRs.push({ qrData, qrString, qrCodeText });
       const listItem = document.createElement('li');
-      listItem.innerHTML = `<img src="${qrData}" class="qr-code"> <br> ${qrString}`;
+      // 画像とテキストを横並びにするため、テキスト部分にクラス history-text を設定
+      listItem.innerHTML = `<span class="history-text">${qrString}</span><img src="${qrData}" class="qr-code">`;
       listItem.addEventListener('click', () => {
         QRCode.toCanvas(qrCanvas, qrCodeText, function (error) {
           if (error) console.error(error);
@@ -564,6 +578,63 @@
         qrTextDisplay.textContent = `生成回数：${num}`;
       });
       historyList.insertBefore(listItem, historyList.firstChild);
+    }
+
+    // 保存処理：Blob を利用してiOS Safariでもダウンロード可能にする
+    function saveQRCode() {
+      const avoidance = document.getElementById('avoidanceSelect').value;
+      const physique = document.getElementById('physiqueSelect').value;
+      const color = document.getElementById('colorSelect').value;
+      const head = document.getElementById('headSelect').value;
+      const antenna = document.getElementById('antennaSelect').value;
+      let feature = document.getElementById('featureSelect').value;
+      if(feature === "その他") {
+        feature = featureOtherInput.value;
+      }
+      let parts = [];
+      if(avoidance) parts.push(avoidance);
+      if(physique) parts.push(physique);
+      if(color) parts.push(color);
+      if(head) parts.push(head);
+      if(antenna) parts.push(antenna);
+      if(feature) parts.push(feature);
+      const text = parts.join(" ");
+      
+      let wrappedLines = text ? wrapText(text, 12) : [];
+      const lineHeight = 30;
+      const textAreaHeight = wrappedLines.length * lineHeight;
+      const combinedCanvas = document.createElement('canvas');
+      combinedCanvas.width = qrCanvas.width;
+      combinedCanvas.height = qrCanvas.height + textAreaHeight;
+      const combinedCtx = combinedCanvas.getContext('2d');
+
+      if (text) {
+        combinedCtx.fillStyle = 'white';
+        combinedCtx.fillRect(0, 0, combinedCanvas.width, textAreaHeight);
+        combinedCtx.fillStyle = 'black';
+        combinedCtx.font = 'bold 16px Arial';
+        combinedCtx.textAlign = 'center';
+        combinedCtx.textBaseline = 'middle';
+        for (let i = 0; i < wrappedLines.length; i++) {
+          combinedCtx.fillText(wrappedLines[i], combinedCanvas.width / 2, lineHeight / 2 + i * lineHeight);
+        }
+      }
+      combinedCtx.drawImage(qrCanvas, 0, textAreaHeight);
+
+      // dataURL を Blob に変換
+      combinedCanvas.toBlob(function(blob) {
+        const fileName = (window.innerWidth >= 768 ? (filenameInput.value.trim() || currentQRData) : currentQRData);
+        const a = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download = fileName + '.png';
+        // Safariではクリックイベントを手動で発火
+        a.click();
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+        }, 100);
+        hideSaveDialog();
+      });
     }
 
     function showSaveDialog() {
@@ -615,55 +686,6 @@
       }
       if (text.length > 0) lines.push(text);
       return lines;
-    }
-
-    function saveQRCode() {
-      const avoidance = document.getElementById('avoidanceSelect').value;
-      const physique = document.getElementById('physiqueSelect').value;
-      const color = document.getElementById('colorSelect').value;
-      const head = document.getElementById('headSelect').value;
-      const antenna = document.getElementById('antennaSelect').value;
-      let feature = document.getElementById('featureSelect').value;
-      if(feature === "その他") {
-        feature = featureOtherInput.value;
-      }
-      let parts = [];
-      if(avoidance) parts.push(avoidance);
-      if(physique) parts.push(physique);
-      if(color) parts.push(color);
-      if(head) parts.push(head);
-      if(antenna) parts.push(antenna);
-      if(feature) parts.push(feature);
-      const text = parts.join(" ");
-      
-      let wrappedLines = text ? wrapText(text, 12) : [];
-      const lineHeight = 30;
-      const textAreaHeight = wrappedLines.length * lineHeight;
-      const combinedCanvas = document.createElement('canvas');
-      combinedCanvas.width = qrCanvas.width;
-      combinedCanvas.height = qrCanvas.height + textAreaHeight;
-      const combinedCtx = combinedCanvas.getContext('2d');
-
-      if (text) {
-        combinedCtx.fillStyle = 'white';
-        combinedCtx.fillRect(0, 0, combinedCanvas.width, textAreaHeight);
-        combinedCtx.fillStyle = 'black';
-        combinedCtx.font = 'bold 16px Arial';
-        combinedCtx.textAlign = 'center';
-        combinedCtx.textBaseline = 'middle';
-        for (let i = 0; i < wrappedLines.length; i++) {
-          combinedCtx.fillText(wrappedLines[i], combinedCanvas.width / 2, lineHeight / 2 + i * lineHeight);
-        }
-      }
-      combinedCtx.drawImage(qrCanvas, 0, textAreaHeight);
-
-      const dataURL = combinedCanvas.toDataURL();
-      const fileName = (window.innerWidth >= 768 ? (filenameInput.value.trim() || currentQRData) : currentQRData);
-      const a = document.createElement('a');
-      a.href = dataURL;
-      a.download = fileName + '.png';
-      a.click();
-      hideSaveDialog();
     }
 
     saveBtn.addEventListener('click', saveQRCode);
