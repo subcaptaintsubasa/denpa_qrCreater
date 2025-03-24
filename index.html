@@ -27,24 +27,23 @@
       flex-wrap: wrap;
     }
     .table-container {
-      width: 100%;
-      max-width: 400px;
       margin: 20px 0;
     }
-    table {
+    .table-container table {
       width: 100%;
+      max-width: 400px;
       border-collapse: collapse;
       margin-bottom: 20px;
     }
-    th, td {
+    .table-container th, .table-container td {
       border: 1px solid #ccc;
       padding: 4px;
       text-align: center;
     }
-    th {
+    .table-container th {
       background-color: #f4f4f4;
     }
-    td {
+    .table-container td {
       word-wrap: break-word;
       max-width: 120px;
     }
@@ -53,12 +52,11 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
-      max-width: 500px;
       margin: 0 auto;
-      /* デフォルトはPC表示（ランドスケープ）用 */
+      /* PC表示の場合のデフォルト幅 */
       width: 35%;
     }
-    /* デフォルトのQRコードサイズ：PC表示 */
+    /* PC用QRコードサイズ */
     canvas.qr-code {
       width: 150px;
       height: 150px;
@@ -95,17 +93,17 @@
       padding: 5px;
       font-size: 14px;
     }
-    /* 特徴の「その他」用入力欄 */
     .feature-other {
       display: none;
       margin-top: 5px;
     }
     .history {
-      width: 100%;
-      max-width: 400px;
+      margin: 20px 0;
       padding: 10px;
       box-sizing: border-box;
-      margin: 20px 0;
+      /* PC表示用のデフォルト幅 */
+      width: 100%;
+      max-width: 400px;
     }
     .history p {
       font-weight: bold;
@@ -116,26 +114,26 @@
       max-height: 400px;
       overflow-y: auto;
     }
-    /* 履歴リストの各項目を横並びにする */
+    /* 履歴リスト項目：画像とテキストを横並び・画像は右寄せ */
     .history li {
       display: flex;
+      justify-content: space-between;
       align-items: center;
       margin-bottom: 10px;
       cursor: pointer;
-      gap: 10px;
     }
     .history li img.qr-code {
       width: 40px;
       height: 40px;
     }
     .history li .history-text {
-      /* テキストが画像の横に表示されるように */
-      font-size: 14px;
-      white-space: nowrap;
+      /* 画像の縦幅（40px）に合わせたフォントサイズ */
+      font-size: 40px;
+      /* 余白を調整 */
+      margin-right: 10px;
     }
     .button-container {
       margin-top: 10px;
-      /* デフォルトはPC表示では表示 */
       display: flex;
       justify-content: center;
       gap: 10px;
@@ -145,22 +143,79 @@
       font-size: 16px;
       cursor: pointer;
     }
-    /* PC表示時（画面幅1024px以上）で体格表ボタンを非表示 */
-    @media (min-width: 1024px) {
+    /* 画面幅による表示切り替え */
+    /* スマホ表示：600px 以下 */
+    @media (max-width: 600px) {
+      .qr-container {
+        width: 80%;
+      }
+      canvas.qr-code {
+        width: 225px;
+        height: 225px;
+      }
+      .table-container {
+        display: none;
+      }
+      /* 履歴はそのまま */
+    }
+    /* タブレット表示：601px ～ 1024px */
+    @media (min-width: 601px) and (max-width: 1024px) {
+      /* 縦画面：スマホと同じレイアウト */
+      @media (orientation: portrait) {
+        .qr-container {
+          width: 80%;
+        }
+        canvas.qr-code {
+          width: 225px;
+          height: 225px;
+        }
+        .table-container {
+          display: none;
+        }
+      }
+      /* 横画面：PC表示レイアウトと同じ（ただし体格表・履歴は小さめに） */
+      @media (orientation: landscape) {
+        .qr-container {
+          width: 35%;
+        }
+        canvas.qr-code {
+          width: 150px;
+          height: 150px;
+        }
+        /* 体格表幅を50%に */
+        .table-container {
+          width: 50%;
+          display: block;
+        }
+        /* 履歴幅を75%に */
+        .history {
+          width: 75%;
+        }
+      }
+    }
+    /* パソコン表示：1025px 以上 */
+    @media (min-width: 1025px) {
+      .qr-container {
+        width: 35%;
+      }
+      canvas.qr-code {
+        width: 150px;
+        height: 150px;
+      }
+      .table-container {
+        width: 100%;
+        max-width: 400px;
+        display: block;
+      }
+      /* 履歴はデフォルト（max-width:400px） */
+    }
+    /* PC表示時、体格表ボタンを非表示 */
+    @media (min-width: 1025px) {
       #table-btn {
         display: none;
       }
     }
-    /* タブレット横画面時の体格表・履歴の幅調整 */
-    @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
-      .table-container {
-        width: 50%;
-      }
-      .history {
-        width: 75%;
-      }
-    }
-    /* ダイアログ（保存用および体格表用） */
+    /* ダイアログ関連 */
     .dialog-container {
       display: none;
       position: fixed;
@@ -212,7 +267,6 @@
     .title-small {
       font-size: 14px;
     }
-    /* オーバーレイ */
     #overlay {
       display: none;
       position: fixed;
@@ -222,53 +276,13 @@
       background: rgba(0,0,0,0.3);
       z-index: 100;
     }
-    /* スマホ・タブレット【縦画面】用：ポートレート */
-    @media (orientation: portrait) {
-      .table-container {
-        display: none;
-      }
-      .qr-container {
-        width: 80%;
-      }
-      canvas.qr-code {
-        width: 225px;
-        height: 225px;
-      }
-      .button-container {
-        display: flex;
-        justify-content: space-around;
-        width: 100%;
-      }
-      .selectGroup,
-      .explanation {
-        width: 100%;
-      }
-    }
-    /* タブレット【横画面】およびPC用：ランドスケープ */
-    @media (orientation: landscape) {
-      .table-container {
-        display: block;
-      }
-      .qr-container {
-        width: 35%;
-      }
-      canvas.qr-code {
-        width: 150px;
-        height: 150px;
-      }
-      /* 横画面ではボタンは常時表示（PC表示時は「体格表」ボタンは非表示） */
-      .button-container {
-        display: flex;
-        justify-content: center;
-      }
-    }
   </style>
 </head>
 <body>
   <!-- オーバーレイ -->
   <div id="overlay"></div>
   
-  <!-- 体格表（PC・ランドスケープ表示用） -->
+  <!-- 体格表（パソコン・タブレット横画面用） -->
   <div class="table-container">
     <h2 class="title-medium">体格表（回避0のみ）</h2>
     <table>
@@ -307,14 +321,13 @@
     </div>
     <canvas id="qr-code-canvas" class="qr-code"></canvas>
     <p id="qr-text">生成回数：1</p>
-    <!-- パソコン・ランドスケープ表示時は、生成回数直下に操作ボタンを配置 -->
+    <!-- PC・タブレット横画面時は、生成回数直下に操作ボタン -->
     <div class="button-container">
       <button id="regenerate-btn">再生成</button>
       <button id="save-btn-mobile">保存</button>
-      <!-- PC表示時は「体格表」ボタンを非表示（CSSで制御） -->
+      <!-- パソコン表示時は「体格表」ボタンを非表示（CSSで制御） -->
       <button id="table-btn">体格表</button>
     </div>
-    <!-- セレクトグループおよび説明文 -->
     <div class="explanation">
       <p class="mid">電波人間の情報を保存画像に追加（任意）</p>
     </div>
@@ -448,11 +461,9 @@
           <option value="顔色素材">顔色素材</option>
           <option value="その他">その他</option>
         </select>
-        <!-- その他が選択された場合の入力欄 -->
         <input type="text" id="featureOtherInput" class="feature-other" placeholder="その他の備考を入力">
       </div>
     </div>
-    <!-- 小さい説明文をセレクトグループの下に配置 -->
     <div class="explanation">
       <p class="small">＊選択した情報がQRコードの上に出力されます。</p>
       <p><a href="https://github.com/subcaptaintsubasa/denpa_qrCreater">ソースコード・MITライセンス</a></p>
@@ -564,11 +575,10 @@
       });
     }
 
-    // 履歴表示のHTMLを修正：テキストと画像を入れ替え、横並びにする
+    // 履歴表示：テキストと画像の位置を入れ替え、画像を右寄せにする
     function addToHistory(qrData, qrString, qrCodeText) {
       savedQRs.push({ qrData, qrString, qrCodeText });
       const listItem = document.createElement('li');
-      // 画像とテキストを横並びにするため、テキスト部分にクラス history-text を設定
       listItem.innerHTML = `<span class="history-text">${qrString}</span><img src="${qrData}" class="qr-code">`;
       listItem.addEventListener('click', () => {
         QRCode.toCanvas(qrCanvas, qrCodeText, function (error) {
@@ -580,7 +590,7 @@
       historyList.insertBefore(listItem, historyList.firstChild);
     }
 
-    // 保存処理：Blob を利用してiOS Safariでもダウンロード可能にする
+    // 保存処理
     function saveQRCode() {
       const avoidance = document.getElementById('avoidanceSelect').value;
       const physique = document.getElementById('physiqueSelect').value;
@@ -621,20 +631,27 @@
       }
       combinedCtx.drawImage(qrCanvas, 0, textAreaHeight);
 
-      // dataURL を Blob に変換
-      combinedCanvas.toBlob(function(blob) {
-        const fileName = (window.innerWidth >= 768 ? (filenameInput.value.trim() || currentQRData) : currentQRData);
-        const a = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        a.href = url;
-        a.download = fileName + '.png';
-        // Safariではクリックイベントを手動で発火
-        a.click();
-        setTimeout(() => {
-          URL.revokeObjectURL(url);
-        }, 100);
+      // スマホ表示（600px以下）の場合は、dataURLを直接新規ウィンドウで開いてダウンロード促す
+      if(window.innerWidth <= 600) {
+        const dataURL = combinedCanvas.toDataURL();
+        // 新規タブで画像を開く（iOS Safariはこれで保存操作ができる場合があります）
+        window.open(dataURL, '_blank');
         hideSaveDialog();
-      });
+      } else {
+        // タブレット横画面およびパソコン表示では Blob を利用
+        combinedCanvas.toBlob(function(blob) {
+          const fileName = (window.innerWidth >= 768 ? (filenameInput.value.trim() || currentQRData) : currentQRData);
+          const a = document.createElement('a');
+          const url = URL.createObjectURL(blob);
+          a.href = url;
+          a.download = fileName + '.png';
+          a.click();
+          setTimeout(() => {
+            URL.revokeObjectURL(url);
+          }, 100);
+          hideSaveDialog();
+        });
+      }
     }
 
     function showSaveDialog() {
