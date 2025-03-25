@@ -17,6 +17,7 @@
     /* 共通スタイル */
     body {
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
       align-items: flex-start;
       padding: 20px;
@@ -24,10 +25,43 @@
       box-sizing: border-box;
       gap: 20px;
       min-height: 100vh;
-      flex-wrap: wrap;
     }
-    .table-container {
+    /* UA・向きに応じたレイアウト調整用 */
+    /* デスクトップ：左（体格表）、中央（QR＋選択）、右（履歴） */
+    .desktop .table-container {
+      order: 1;
+      width: 20%;
+    }
+    .desktop .qr-container {
+      order: 2;
+      width: 55%;
+    }
+    .desktop .history {
+      order: 3;
+      width: 20%;
+    }
+    /* タブレット 横画面の場合：左（体格表、50%）、右（QR＋選択、50%）、下部に履歴（100%） */
+    .tablet.landscape .table-container {
+      order: 1;
+      width: 50%;
+    }
+    .tablet.landscape .qr-container {
+      order: 2;
+      width: 50%;
+    }
+    .tablet.landscape .history {
+      order: 3;
       width: 100%;
+    }
+    /* スマホおよびタブレット縦画面は従来通り */
+    .portrait .table-container {
+      display: none;
+    }
+    .portrait .qr-container {
+      width: 80%;
+    }
+    /* 体格表（共通） */
+    .table-container {
       max-width: 400px;
       margin: 20px 0;
     }
@@ -41,24 +75,17 @@
       padding: 4px;
       text-align: center;
     }
-    th {
-      background-color: #f4f4f4;
-    }
+    th { background-color: #f4f4f4; }
     td {
       word-wrap: break-word;
       max-width: 120px;
     }
+    /* QRコンテナ */
     .qr-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       text-align: center;
       max-width: 500px;
       margin: 0 auto;
-      /* デフォルトはPC表示（ランドスケープ）用 */
-      width: 35%;
     }
-    /* デフォルトのQRコードサイズ：PC表示 */
     canvas.qr-code {
       width: 150px;
       height: 150px;
@@ -95,20 +122,20 @@
       padding: 5px;
       font-size: 14px;
     }
-    /* 特徴の「その他」用入力欄 */
     .feature-other {
       display: none;
       margin-top: 5px;
     }
+    /* 履歴 */
     .history {
-      width: 100%;
       max-width: 400px;
       padding: 10px;
+      margin: 20px auto;
       box-sizing: border-box;
-      margin: 20px 0;
     }
     .history p {
       font-weight: bold;
+      text-align: center;
     }
     .history ul {
       list-style-type: none;
@@ -116,26 +143,28 @@
       max-height: 400px;
       overflow-y: auto;
     }
-    /* 履歴リストの各項目を横並びにする */
     .history li {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
-      cursor: pointer;
-      gap: 10px;
+      width: 80%;
+      margin: 0 auto 10px auto;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 5px;
+    }
+    .history li .history-text {
+      flex: 1;
+      text-align: left;
+      font-size: 14px;
     }
     .history li img.qr-code {
       width: 40px;
       height: 40px;
+      margin-left: auto;
     }
-    .history li .history-text {
-      /* テキストが画像の横に表示されるように */
-      font-size: 14px;
-      white-space: nowrap;
-    }
+    /* 操作ボタン */
     .button-container {
       margin-top: 10px;
-      /* デフォルトはPC表示では表示 */
       display: flex;
       justify-content: center;
       gap: 10px;
@@ -145,22 +174,9 @@
       font-size: 16px;
       cursor: pointer;
     }
-    /* PC表示時（画面幅1024px以上）で体格表ボタンを非表示 */
-    @media (min-width: 1024px) {
-      #table-btn {
-        display: none;
-      }
-    }
-    /* タブレット横画面時の体格表・履歴の幅調整 */
-    @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
-      .table-container {
-        width: 50%;
-      }
-      .history {
-        width: 75%;
-      }
-    }
-    /* ダイアログ（保存用および体格表用） */
+    /* PC表示時は体格表ボタン非表示 */
+    .desktop #table-btn { display: none; }
+    /* ダイアログ */
     .dialog-container {
       display: none;
       position: fixed;
@@ -169,7 +185,7 @@
       transform: translate(-50%, -50%);
       background-color: #f0f8ff;
       padding: 20px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
       border-radius: 8px;
       z-index: 101;
       max-width: 300px;
@@ -192,26 +208,14 @@
       cursor: pointer;
       margin-right: 2%;
     }
-    .dialog-container button:hover {
-      background-color: #45a049;
-    }
+    .dialog-container button:hover { background-color: #45a049; }
     .dialog-container .cancel-btn {
       background-color: #f44336;
     }
-    .dialog-container .cancel-btn:hover {
-      background-color: #e53935;
-    }
-    .title-large {
-      font-size: 30px;
-      font-weight: bold;
-    }
-    .title-medium {
-      font-size: 22px;
-      font-weight: bold;
-    }
-    .title-small {
-      font-size: 14px;
-    }
+    .dialog-container .cancel-btn:hover { background-color: #e53935; }
+    .title-large { font-size: 30px; font-weight: bold; }
+    .title-medium { font-size: 22px; font-weight: bold; }
+    .title-small { font-size: 14px; }
     /* オーバーレイ */
     #overlay {
       display: none;
@@ -222,53 +226,38 @@
       background: rgba(0,0,0,0.3);
       z-index: 100;
     }
-    /* スマホ・タブレット【縦画面】用：ポートレート */
-    @media (orientation: portrait) {
-      .table-container {
-        display: none;
-      }
-      .qr-container {
-        width: 80%;
-      }
-      canvas.qr-code {
-        width: 225px;
-        height: 225px;
-      }
-      .button-container {
-        display: flex;
-        justify-content: space-around;
-        width: 100%;
-      }
-      .selectGroup,
-      .explanation {
-        width: 100%;
-      }
-    }
-    /* タブレット【横画面】およびPC用：ランドスケープ */
-    @media (orientation: landscape) {
-      .table-container {
-        display: block;
-      }
-      .qr-container {
-        width: 35%;
-      }
-      canvas.qr-code {
-        width: 150px;
-        height: 150px;
-      }
-      /* 横画面ではボタンは常時表示（PC表示時は「体格表」ボタンは非表示） */
-      .button-container {
-        display: flex;
-        justify-content: center;
-      }
-    }
   </style>
+  <!-- UA・向き判定スクリプト -->
+  <script>
+    // デバイス種別の判別
+    function detectDevice() {
+      const ua = navigator.userAgent;
+      // iPadまたは、Macでタッチ操作があればタブレットと判断
+      const isIpad = /iPad/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      if (isIpad) return "tablet";
+      if (/Mobi|Android/i.test(ua)) return "mobile";
+      return "desktop";
+    }
+    // 画面の向き判定
+    function detectOrientation() {
+      return (window.innerWidth > window.innerHeight) ? "landscape" : "portrait";
+    }
+    const deviceType = detectDevice();
+    const orientation = detectOrientation();
+    document.documentElement.classList.add(deviceType);
+    document.documentElement.classList.add(orientation);
+    // リサイズ時に向きを更新
+    window.addEventListener('resize', function(){
+      document.documentElement.classList.remove('landscape', 'portrait');
+      document.documentElement.classList.add(detectOrientation());
+    });
+  </script>
 </head>
 <body>
   <!-- オーバーレイ -->
   <div id="overlay"></div>
   
-  <!-- 体格表（PC・ランドスケープ表示用） -->
+  <!-- 体格表（PC・デスクトップまたはタブレット横画面の場合） -->
   <div class="table-container">
     <h2 class="title-medium">体格表（回避0のみ）</h2>
     <table>
@@ -298,23 +287,22 @@
       </tbody>
     </table>
   </div>
-
+  
+  <!-- QRコード＋その他（選択ボックス等） -->
   <div class="qr-container">
     <div class="qr-message">
       <p class="title-large">電波人間用QRコード生成サイト</p>
       <p class="title-small">Enter/Spaceで「再生成」、Sで「保存」</p>
-      <p class="title-small">履歴の文字/画像をクリックで「再表示」</p>
+      <p class="title-small">履歴の画像・テキストをクリックで「再表示」</p>
     </div>
     <canvas id="qr-code-canvas" class="qr-code"></canvas>
     <p id="qr-text">生成回数：1</p>
-    <!-- パソコン・ランドスケープ表示時は、生成回数直下に操作ボタンを配置 -->
+    <!-- 操作ボタン（デスクトップでは「体格表」ボタンは非表示） -->
     <div class="button-container">
       <button id="regenerate-btn">再生成</button>
       <button id="save-btn-mobile">保存</button>
-      <!-- PC表示時は「体格表」ボタンを非表示（CSSで制御） -->
       <button id="table-btn">体格表</button>
     </div>
-    <!-- セレクトグループおよび説明文 -->
     <div class="explanation">
       <p class="mid">電波人間の情報を保存画像に追加（任意）</p>
     </div>
@@ -448,25 +436,25 @@
           <option value="顔色素材">顔色素材</option>
           <option value="その他">その他</option>
         </select>
-        <!-- その他が選択された場合の入力欄 -->
+        <!-- その他用入力欄 -->
         <input type="text" id="featureOtherInput" class="feature-other" placeholder="その他の備考を入力">
       </div>
     </div>
-    <!-- 小さい説明文をセレクトグループの下に配置 -->
     <div class="explanation">
       <p class="small">＊選択した情報がQRコードの上に出力されます。</p>
       <p><a href="https://github.com/subcaptaintsubasa/denpa_qrCreater">ソースコード・MITライセンス</a></p>
     </div>
   </div>
-
+  
+  <!-- 履歴 -->
   <div class="history">
     <p class="title-medium">履歴:</p>
     <ul id="history-list">
       <!-- 履歴データ -->
     </ul>
   </div>
-
-  <!-- 保存用ファイル名入力ダイアログ（PC用） -->
+  
+  <!-- 保存用ファイル名入力ダイアログ（パソコン用のみ） -->
   <div id="dialog" class="dialog-container">
     <p class="title-medium">ファイル名を入力</p>
     <p class="title-small">*拡張子は不要です。<br>ファイル名を入力しない場合はそのままENTERを押してください。</p>
@@ -476,8 +464,8 @@
       <button id="cancel-btn" class="cancel-btn">キャンセル</button>
     </div>
   </div>
-
-  <!-- 体格表ダイアログ（スマホ用／必要に応じて） -->
+  
+  <!-- 体格表ダイアログ（必要に応じて） -->
   <div id="tableDialog" class="dialog-container">
     <p class="title-medium">体格表（回避0のみ）</p>
     <table>
@@ -508,10 +496,10 @@
     </table>
     <button id="closeTableBtn">閉じる</button>
   </div>
-
+  
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <script>
-    // 既存のJavaScriptコード（QRコード生成、履歴、ダイアログ処理等）
+    // 既存の機能
     const historyList = document.getElementById('history-list');
     const qrCanvas = document.getElementById('qr-code-canvas');
     const qrTextDisplay = document.getElementById('qr-text');
@@ -519,10 +507,10 @@
     let generationCount = 1;
     let currentQRData = '';
     let savedQRs = [];
-
+    
     qrCanvas.width = qrSize;
     qrCanvas.height = qrSize;
-
+    
     const dialog = document.getElementById('dialog');
     const filenameInput = document.getElementById('filename-input');
     const saveBtn = document.getElementById('save-btn');
@@ -535,13 +523,13 @@
     const featureSelect = document.getElementById('featureSelect');
     const featureOtherInput = document.getElementById('featureOtherInput');
     const overlay = document.getElementById('overlay');
-
+    
     let isDialogVisible = false;
-
+    
     featureSelect.addEventListener('change', function() {
       featureOtherInput.style.display = (this.value === "その他") ? "block" : "none";
     });
-
+    
     function generateRandomString(length) {
       const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       let result = '';
@@ -550,7 +538,7 @@
       }
       return result;
     }
-
+    
     function generateQRCode() {
       const ctx = qrCanvas.getContext('2d');
       ctx.clearRect(0, 0, qrCanvas.width, qrCanvas.height);
@@ -559,28 +547,27 @@
         if (error) console.error(error);
         currentQRData = qrCodeText;
         qrTextDisplay.textContent = `生成回数：${generationCount}`;
-        addToHistory(qrCanvas.toDataURL(), `生成No.${generationCount}`, qrCodeText);
+        addToHistory(qrCanvas.toDataURL(), `・生成No.${generationCount}`, qrCodeText);
         generationCount++;
       });
     }
-
-    // 履歴表示のHTMLを修正：テキストと画像を入れ替え、横並びにする
+    
+    // 履歴表示：画像を右端、テキストは「・生成No.○○」で横並び・中央揃え
     function addToHistory(qrData, qrString, qrCodeText) {
       savedQRs.push({ qrData, qrString, qrCodeText });
       const listItem = document.createElement('li');
-      // 画像とテキストを横並びにするため、テキスト部分にクラス history-text を設定
       listItem.innerHTML = `<span class="history-text">${qrString}</span><img src="${qrData}" class="qr-code">`;
       listItem.addEventListener('click', () => {
         QRCode.toCanvas(qrCanvas, qrCodeText, function (error) {
           if (error) console.error(error);
         });
-        const num = qrString.replace('生成No.', '');
+        const num = qrString.replace('・生成No.', '');
         qrTextDisplay.textContent = `生成回数：${num}`;
       });
       historyList.insertBefore(listItem, historyList.firstChild);
     }
-
-    // 保存処理：Blob を利用してiOS Safariでもダウンロード可能にする
+    
+    // 保存処理
     function saveQRCode() {
       const avoidance = document.getElementById('avoidanceSelect').value;
       const physique = document.getElementById('physiqueSelect').value;
@@ -588,9 +575,7 @@
       const head = document.getElementById('headSelect').value;
       const antenna = document.getElementById('antennaSelect').value;
       let feature = document.getElementById('featureSelect').value;
-      if(feature === "その他") {
-        feature = featureOtherInput.value;
-      }
+      if(feature === "その他") { feature = featureOtherInput.value; }
       let parts = [];
       if(avoidance) parts.push(avoidance);
       if(physique) parts.push(physique);
@@ -607,7 +592,7 @@
       combinedCanvas.width = qrCanvas.width;
       combinedCanvas.height = qrCanvas.height + textAreaHeight;
       const combinedCtx = combinedCanvas.getContext('2d');
-
+    
       if (text) {
         combinedCtx.fillStyle = 'white';
         combinedCtx.fillRect(0, 0, combinedCanvas.width, textAreaHeight);
@@ -620,52 +605,38 @@
         }
       }
       combinedCtx.drawImage(qrCanvas, 0, textAreaHeight);
-
-      // dataURL を Blob に変換
-      combinedCanvas.toBlob(function(blob) {
-        const fileName = (window.innerWidth >= 768 ? (filenameInput.value.trim() || currentQRData) : currentQRData);
-        const a = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        a.href = url;
-        a.download = fileName + '.png';
-        // Safariではクリックイベントを手動で発火
-        a.click();
-        setTimeout(() => {
-          URL.revokeObjectURL(url);
-        }, 100);
-        hideSaveDialog();
-      });
-    }
-
-    function showSaveDialog() {
-      if (window.innerWidth >= 768) {
-        filenameInput.value = '';
-        overlay.style.display = 'block';
-        setTimeout(() => {
-          dialog.style.display = 'block';
-          filenameInput.focus();
-          isDialogVisible = true;
-        }, 100);
+    
+      // デバイス種別で保存方法を分岐
+      if(document.documentElement.classList.contains('desktop')) {
+        // パソコン表示：従来通りファイル名入力ダイアログ経由でダウンロード
+        combinedCanvas.toBlob(function(blob) {
+          const fileName = (filenameInput.value.trim() || currentQRData) + '.png';
+          const a = document.createElement('a');
+          const url = URL.createObjectURL(blob);
+          a.href = url;
+          a.download = fileName;
+          a.click();
+          setTimeout(() => { URL.revokeObjectURL(url); }, 100);
+          hideSaveDialog();
+        });
       } else {
-        saveQRCode();
+        // スマホ・タブレット表示：ファイル名入力ダイアログ省略しWeb Share APIで保存（シェア）
+        combinedCanvas.toBlob(function(blob) {
+          const fileName = currentQRData + '.png';
+          const file = new File([blob], fileName, {type: blob.type});
+          if(navigator.canShare && navigator.canShare({files: [file]})) {
+            navigator.share({files: [file]})
+              .then(() => console.log("共有成功"))
+              .catch(err => console.error("共有失敗", err));
+          } else {
+            // シェアAPI非対応の場合は、新規タブで画像を表示
+            const url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+          }
+        });
       }
     }
-
-    function hideSaveDialog() {
-      dialog.style.display = 'none';
-      overlay.style.display = 'none';
-      isDialogVisible = false;
-    }
-
-    function showTableDialog() {
-      overlay.style.display = 'block';
-      tableDialog.style.display = 'block';
-    }
-    function hideTableDialog() {
-      tableDialog.style.display = 'none';
-      overlay.style.display = 'none';
-    }
-
+    
     function wrapText(text, maxChars = 12) {
       let lines = [];
       while (text.length > maxChars) {
@@ -678,43 +649,67 @@
             break;
           }
         }
-        if (breakPos === -1) {
-          breakPos = maxChars;
-        }
+        if (breakPos === -1) { breakPos = maxChars; }
         lines.push(text.substring(0, breakPos).trim());
         text = text.substring(breakPos).trim();
       }
       if (text.length > 0) lines.push(text);
       return lines;
     }
-
+    
+    function showSaveDialog() {
+      if(document.documentElement.classList.contains('desktop')) {
+        filenameInput.value = '';
+        overlay.style.display = 'block';
+        setTimeout(() => {
+          dialog.style.display = 'block';
+          filenameInput.focus();
+          isDialogVisible = true;
+        }, 100);
+      } else {
+        // スマホ・タブレットの場合は即時保存（ダイアログ省略）
+        saveQRCode();
+      }
+    }
+    
+    function hideSaveDialog() {
+      dialog.style.display = 'none';
+      overlay.style.display = 'none';
+      isDialogVisible = false;
+    }
+    
+    function showTableDialog() {
+      overlay.style.display = 'block';
+      tableDialog.style.display = 'block';
+    }
+    function hideTableDialog() {
+      tableDialog.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+    
     saveBtn.addEventListener('click', saveQRCode);
     cancelBtn.addEventListener('click', hideSaveDialog);
     regenerateBtn.addEventListener('click', generateQRCode);
     saveBtnMobile.addEventListener('click', showSaveDialog);
-    if (tableBtn) {
-      tableBtn.addEventListener('click', showTableDialog);
-    }
+    if(tableBtn) { tableBtn.addEventListener('click', showTableDialog); }
     closeTableBtn.addEventListener('click', hideTableDialog);
-
+    
     window.addEventListener('keydown', function (e) {
       const activeTag = document.activeElement.tagName;
-      if (document.activeElement.id === 'filename-input' && e.key === 'Enter') {
+      if(document.activeElement.id === 'filename-input' && e.key === 'Enter') {
         saveQRCode();
         return;
       }
-      if (activeTag === 'INPUT' || activeTag === 'SELECT') {
-        return;
-      }
-      if (isDialogVisible && e.key === 'Enter') {
+      if(activeTag === 'INPUT' || activeTag === 'SELECT') { return; }
+      if(isDialogVisible && e.key === 'Enter') {
         saveQRCode();
-      } else if (e.key === 'Enter' || e.key === ' ') {
+      } else if(e.key === 'Enter' || e.key === ' ') {
         generateQRCode();
-      } else if (e.key === 'S' || e.key === 's') {
+      } else if(e.key === 'S' || e.key === 's') {
         showSaveDialog();
       }
     });
-
+    
     generateQRCode();
   </script>
 </body>
