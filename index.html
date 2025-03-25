@@ -26,20 +26,20 @@
       gap: 20px;
       min-height: 100vh;
     }
-    /* --- パソコン表示（desktop）レイアウト --- */
+    /* --- Desktop 表示 --- */
     .desktop .table-container {
       order: 1;
-      width: 20%;
+      width: 35%;
     }
     .desktop .qr-container {
       order: 2;
-      width: 55%;
+      width: 50%;
     }
     .desktop .history {
       order: 3;
-      width: 20%;
+      width: 15%;
     }
-    /* --- タブレット横画面（tablet.landscape）レイアウト --- */
+    /* --- タブレット 横画面 --- */
     .tablet.landscape .table-container {
       order: 1;
       width: 50%;
@@ -52,33 +52,41 @@
       order: 3;
       width: 100%;
     }
-    /* スマホおよびタブレット縦画面（portrait）では体格表は非表示 */
+    /* スマホ・タブレット 縦画面（portrait）は従来通り：体格表は非表示（ダイアログで表示） */
     .portrait .table-container {
       display: none;
     }
     .portrait .qr-container {
       width: 80%;
     }
-    /* 体格表 */
+    /* 体格表エリア */
     .table-container {
       max-width: 400px;
       margin: 20px 0;
     }
-    table {
+    .table-container h2 {
+      text-align: center;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    /* 表内コンテナ：横スクロール対応＋罫線設定 */
+    #antennaTableContainer {
+      overflow-x: auto;
+    }
+    #antennaTableContainer table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 20px;
+      border: 1px solid #ccc;
     }
-    th, td {
+    #antennaTableContainer th,
+    #antennaTableContainer td {
       border: 1px solid #ccc;
       padding: 4px;
       text-align: center;
     }
-    th { background-color: #f4f4f4; }
-    td {
-      word-wrap: break-word;
-      max-width: 120px;
-    }
+    /* ヘッダーセルの固定幅 */
+    #antennaTableContainer th.antenna { min-width: 5ch; }
+    #antennaTableContainer th.data { min-width: 4ch; }
     /* QRコンテナ */
     .qr-container {
       text-align: center;
@@ -125,7 +133,15 @@
       display: none;
       margin-top: 5px;
     }
-    /* 履歴 */
+    /* チェックボックスエリア：体格表下部に縦並び */
+    #columnOptions {
+      text-align: center;
+      margin-top: 10px;
+    }
+    #columnOptions div {
+      margin-bottom: 5px;
+    }
+    /* 履歴エリア */
     .history {
       max-width: 400px;
       padding: 10px;
@@ -173,7 +189,7 @@
       font-size: 16px;
       cursor: pointer;
     }
-    /* パソコン表示では「体格表」ボタン非表示 */
+    /* Desktop：体格表ボタン非表示 */
     .desktop #table-btn { display: none; }
     /* ダイアログ（保存用、体格表用） */
     .dialog-container {
@@ -191,7 +207,7 @@
       width: 100%;
       text-align: center;
     }
-    /* 体格表ダイアログ（#tableDialog）の修正：中央配置、最大高さ90vh、縦スクロール対応 */
+    /* 体格表ダイアログ：中央配置、幅90%、最大高さ90vh、縦スクロール対応 */
     #tableDialog {
       position: fixed;
       top: 50%;
@@ -205,6 +221,7 @@
       border-radius: 8px;
       z-index: 101;
       overflow-y: auto;
+      text-align: center;
     }
     .dialog-container input {
       padding: 10px;
@@ -243,7 +260,6 @@
   </style>
   <!-- UA・向き判定スクリプト -->
   <script>
-    // デバイス種別の判別
     function detectDevice() {
       const ua = navigator.userAgent;
       const isIpad = /iPad/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -251,7 +267,6 @@
       if (/Mobi|Android/i.test(ua)) return "mobile";
       return "desktop";
     }
-    // 画面の向き判定
     function detectOrientation() {
       return (window.innerWidth > window.innerHeight) ? "landscape" : "portrait";
     }
@@ -269,38 +284,21 @@
   <!-- オーバーレイ -->
   <div id="overlay"></div>
   
-  <!-- 体格表（パソコン表示・タブレット横画面用） -->
+  <!-- 体格表エリア -->
   <div class="table-container">
-    <h2 class="title-medium">体格表（回避0のみ）</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>アンテナ</th>
-          <th>最大</th>
-          <th>最速</th>
-          <th>備考</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>アン無</td><td>40</td><td>29</td><td></td></tr>
-        <tr><td>単体攻撃</td><td>33</td><td>24</td><td>火水:HP+1<br>風光:回避+1</td></tr>
-        <tr><td>3体攻撃</td><td>35</td><td>26</td><td>火水:HP+1<br>風光:回避+1</td></tr>
-        <tr><td>ノクダ</td><td>38</td><td>28</td><td>回避+1</td></tr>
-        <tr><td>単体回復</td><td>41</td><td>31</td><td></td></tr>
-        <tr><td>単体復活</td><td>42</td><td>32</td><td></td></tr>
-        <tr><td>痺れとる<br>目覚める</td><td>43</td><td>33</td><td></td></tr>
-        <tr><td>解毒<br>属性治す<br>全部治す</td><td>42</td><td>32</td><td></td></tr>
-        <tr><td>単体増強</td><td>36</td><td>27</td><td>かわしやすい<br>:回避+2</td></tr>
-        <tr><td>蓄える</td><td>42</td><td>32</td><td></td></tr>
-        <tr><td>興奮</td><td>37</td><td>27</td><td></td></tr>
-        <tr><td>弱体系</td><td>37</td><td>27</td><td>皆かわしにくい<br>:回避+4</td></tr>
-        <tr><td>無敵</td><td>42</td><td>32</td><td></td></tr>
-        <tr><td>足元ガード</td><td>35</td><td>25</td><td>回避+1</td></tr>
-      </tbody>
-    </table>
+    <h2 class="title-medium">体格表（回避表）</h2>
+    <div id="antennaTableContainer"></div>
+    <!-- チェックボックスを表の下部に縦並び -->
+    <div id="columnOptions">
+      <div><label><input type="checkbox" value="回避0最速" checked> 回避0最速</label></div>
+      <div><label><input type="checkbox" value="回避0最大" checked> 回避0最大</label></div>
+      <div><label><input type="checkbox" value="回避3最大"> 回避3最大</label></div>
+      <div><label><input type="checkbox" value="回避3+最速"> 回避3+最速</label></div>
+      <div><label><input type="checkbox" value="回避3最速"> 回避3最速</label></div>
+    </div>
   </div>
   
-  <!-- QRコード＋その他 -->
+  <!-- QRコード＋その他エリア -->
   <div class="qr-container">
     <div class="qr-message">
       <p class="title-large">電波人間用QRコード生成サイト</p>
@@ -447,7 +445,6 @@
           <option value="顔色素材">顔色素材</option>
           <option value="その他">その他</option>
         </select>
-        <!-- その他用入力欄 -->
         <input type="text" id="featureOtherInput" class="feature-other" placeholder="その他の備考を入力">
       </div>
     </div>
@@ -457,7 +454,7 @@
     </div>
   </div>
   
-  <!-- 履歴 -->
+  <!-- 履歴エリア -->
   <div class="history">
     <p class="title-medium">履歴:</p>
     <ul id="history-list">
@@ -465,7 +462,7 @@
     </ul>
   </div>
   
-  <!-- 保存用ファイル名入力ダイアログ（パソコン用のみ） -->
+  <!-- 保存用ファイル名入力ダイアログ（Desktop 用のみ） -->
   <div id="dialog" class="dialog-container">
     <p class="title-medium">ファイル名を入力</p>
     <p class="title-small">*拡張子は不要です。<br>入力しない場合はそのままENTERを押してください。</p>
@@ -476,41 +473,16 @@
     </div>
   </div>
   
-  <!-- 体格表ダイアログ（モバイル／タブレット用：全画面表示→中央揃え・高さ制限・縦スクロール対応） -->
+  <!-- 体格表ダイアログ（モバイル／タブレット用：全画面→中央・高さ制限・縦スクロール対応） -->
   <div id="tableDialog" class="dialog-container">
-    <p class="title-medium">体格表（回避0のみ）</p>
-    <table>
-      <thead>
-        <tr>
-          <th>アンテナ</th>
-          <th>最大</th>
-          <th>最速</th>
-          <th>備考</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>アン無</td><td>40</td><td>29</td><td></td></tr>
-        <tr><td>単体攻撃</td><td>33</td><td>24</td><td>火水:HP+1<br>風光:回避+1</td></tr>
-        <tr><td>3体攻撃</td><td>35</td><td>26</td><td>火水:HP+1<br>風光:回避+1</td></tr>
-        <tr><td>ノクダ</td><td>38</td><td>28</td><td>回避+1</td></tr>
-        <tr><td>単体回復</td><td>41</td><td>31</td><td></td></tr>
-        <tr><td>単体復活</td><td>42</td><td>32</td><td></td></tr>
-        <tr><td>痺れとる<br>目覚める</td><td>43</td><td>33</td><td></td></tr>
-        <tr><td>解毒<br>属性治す<br>全部治す</td><td>42</td><td>32</td><td></td></tr>
-        <tr><td>単体増強</td><td>36</td><td>27</td><td>かわしやすい<br>:回避+2</td></tr>
-        <tr><td>蓄える</td><td>42</td><td>32</td><td></td></tr>
-        <tr><td>興奮</td><td>37</td><td>27</td><td></td></tr>
-        <tr><td>弱体系</td><td>37</td><td>27</td><td>皆かわしにくい<br>:回避+4</td></tr>
-        <tr><td>無敵</td><td>42</td><td>32</td><td></td></tr>
-        <tr><td>足元ガード</td><td>35</td><td>25</td><td>回避+1</td></tr>
-      </tbody>
-    </table>
+    <p class="title-medium">体格表（回避表）</p>
+    <div id="tableDialogContent"></div>
     <button id="closeTableBtn">閉じる</button>
   </div>
   
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <script>
-    // 既存の機能
+    /* --- 既存のQRコード生成、履歴、保存処理 --- */
     const historyList = document.getElementById('history-list');
     const qrCanvas = document.getElementById('qr-code-canvas');
     const qrTextDisplay = document.getElementById('qr-text');
@@ -578,7 +550,7 @@
       historyList.insertBefore(listItem, historyList.firstChild);
     }
     
-    // 保存処理：デスクトップは従来方式、モバイル・タブレットは端末別で分岐
+    // 保存処理：Desktop は従来方式、モバイル／タブレットは端末別分岐
     function saveQRCode() {
       const avoidance = document.getElementById('avoidanceSelect').value;
       const physique = document.getElementById('physiqueSelect').value;
@@ -620,7 +592,6 @@
       const isDesktop = document.documentElement.classList.contains('desktop');
       const isAndroid = /Android/i.test(navigator.userAgent);
       if(isDesktop) {
-        // パソコン表示：従来通りダウンロード方式（ファイル名入力ダイアログ経由）
         combinedCanvas.toBlob(function(blob) {
           const fileName = (filenameInput.value.trim() || currentQRData) + '.png';
           const a = document.createElement('a');
@@ -632,9 +603,7 @@
           hideSaveDialog();
         });
       } else {
-        // モバイル／タブレットの場合
         if(isAndroid) {
-          // Android：ダウンロード方式に戻す
           combinedCanvas.toBlob(function(blob) {
             const fileName = currentQRData + '.png';
             const a = document.createElement('a');
@@ -645,7 +614,6 @@
             setTimeout(() => { URL.revokeObjectURL(url); }, 100);
           });
         } else {
-          // iOS：Web Share APIを利用（シェア画面経由）
           combinedCanvas.toBlob(function(blob) {
             const fileName = currentQRData + '.png';
             const file = new File([blob], fileName, {type: blob.type});
@@ -705,6 +673,8 @@
     function showTableDialog() {
       overlay.style.display = 'block';
       tableDialog.style.display = 'block';
+      renderAntennaTable();
+      document.getElementById("tableDialogContent").innerHTML = document.getElementById("antennaTableContainer").innerHTML;
     }
     function hideTableDialog() {
       tableDialog.style.display = 'none';
@@ -735,6 +705,66 @@
     });
     
     generateQRCode();
+    
+    /* --- 体格表データとテーブル生成 --- */
+    const antennaData = [
+      { antenna: "アン無", "回避0最大": "40", "回避0最速": "29", "回避3最大": "37", "回避3+最速": "26", "回避3最速": "24" },
+      { antenna: "単体攻撃", "回避0最大": "33", "回避0最速": "24", "回避3最大": "31", "回避3+最速": "22", "回避3最速": "20" },
+      { antenna: "3体攻撃", "回避0最大": "35", "回避0最速": "26", "回避3最大": "33", "回避3+最速": "23", "回避3最速": "21" },
+      { antenna: "ノクダ", "回避0最大": "38", "回避0最速": "28", "回避3最大": "36", "回避3+最速": "26", "回避3最速": "23" },
+      { antenna: "単体回復", "回避0最大": "41", "回避0最速": "31", "回避3最大": "39", "回避3+最速": "28", "回避3最速": "26" },
+      { antenna: "単体復活", "回避0最大": "42", "回避0最速": "32", "回避3最大": "40", "回避3+最速": "30", "回避3最速": "27" },
+      { antenna: "痺れ取る<br>目覚める", "回避0最大": "43", "回避0最速": "33", "回避3最大": "41", "回避3+最速": "31", "回避3最速": "28" },
+      { antenna: "解毒<br>属性治す<br>全部治す", "回避0最大": "42", "回避0最速": "32", "回避3最大": "40", "回避3+最速": "29", "回避3最速": "27" },
+      { antenna: "単体増強", "回避0最大": "36", "回避0最速": "27", "回避3最大": "34", "回避3+最速": "25", "回避3最速": "23" },
+      { antenna: "蓄える", "回避0最大": "42", "回避0最速": "32", "回避3最大": "39", "回避3+最速": "30", "回避3最速": "27" },
+      { antenna: "興奮", "回避0最大": "37", "回避0最速": "27", "回避3最大": "35", "回避3+最速": "25", "回避3最速": "22" },
+      { antenna: "弱体系", "回避0最大": "37", "回避0最速": "27", "回避3最大": "35", "回避3+最速": "25", "回避3最速": "22" },
+      { antenna: "無敵", "回避0最大": "42", "回避0最速": "32", "回避3最大": "40", "回避3+最速": "30", "回避3最速": "27" },
+      { antenna: "足元ガード", "回避0最大": "35", "回避0最速": "25", "回避3最大": "32", "回避3+最速": "22", "回避3最速": "20" }
+    ];
+    
+    // ヘッダー用フォーマット関数：指定の値の場合に <br> を挿入
+    function formatHeader(text) {
+      if(text === "回避0最速") return "回避0<br>最速";
+      if(text === "回避0最大") return "回避0<br>最大";
+      if(text === "回避3最大") return "回避3<br>最大";
+      if(text === "回避3+最速") return "回避3+<br>最速";
+      if(text === "回避3最速") return "回避3<br>最速";
+      return text;
+    }
+    
+    function renderAntennaTable() {
+      const container = document.getElementById("antennaTableContainer");
+      const checkboxes = document.querySelectorAll("#columnOptions input[type=checkbox]");
+      let selectedColumns = [];
+      checkboxes.forEach(chk => {
+        if(chk.checked) selectedColumns.push(chk.value);
+      });
+      
+      let html = "<table><thead><tr><th class='antenna' style='min-width:5ch;'>アンテナ</th>";
+      selectedColumns.forEach(col => {
+        html += "<th class='data' style='min-width:4ch;'>" + formatHeader(col) + "</th>";
+      });
+      html += "</tr></thead><tbody>";
+      
+      antennaData.forEach(row => {
+        html += "<tr><td class='antenna'>" + row.antenna + "</td>";
+        selectedColumns.forEach(col => {
+          html += "<td class='data'>" + row[col] + "</td>";
+        });
+        html += "</tr>";
+      });
+      
+      html += "</tbody></table>";
+      container.innerHTML = html;
+    }
+    
+    document.querySelectorAll("#columnOptions input[type=checkbox]").forEach(chk => {
+      chk.addEventListener("change", renderAntennaTable);
+    });
+    
+    renderAntennaTable();
   </script>
 </body>
 </html>
