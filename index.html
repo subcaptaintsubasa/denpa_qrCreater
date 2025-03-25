@@ -26,8 +26,7 @@
       gap: 20px;
       min-height: 100vh;
     }
-    /* UA・向きに応じたレイアウト調整用 */
-    /* デスクトップ：左（体格表）、中央（QR＋選択）、右（履歴） */
+    /* --- パソコン表示（desktop）レイアウト --- */
     .desktop .table-container {
       order: 1;
       width: 20%;
@@ -40,7 +39,7 @@
       order: 3;
       width: 20%;
     }
-    /* タブレット 横画面の場合：左（体格表、50%）、右（QR＋選択、50%）、下部に履歴（100%） */
+    /* --- タブレット横画面（tablet.landscape）レイアウト --- */
     .tablet.landscape .table-container {
       order: 1;
       width: 50%;
@@ -53,14 +52,14 @@
       order: 3;
       width: 100%;
     }
-    /* スマホおよびタブレット縦画面は従来通り */
+    /* スマホおよびタブレット縦画面（portrait）では体格表は非表示 */
     .portrait .table-container {
       display: none;
     }
     .portrait .qr-container {
       width: 80%;
     }
-    /* 体格表（共通） */
+    /* 体格表 */
     .table-container {
       max-width: 400px;
       margin: 20px 0;
@@ -174,9 +173,9 @@
       font-size: 16px;
       cursor: pointer;
     }
-    /* PC表示時は体格表ボタン非表示 */
+    /* パソコン表示では「体格表」ボタン非表示 */
     .desktop #table-btn { display: none; }
-    /* ダイアログ */
+    /* ダイアログ（保存用、体格表用） */
     .dialog-container {
       display: none;
       position: fixed;
@@ -191,6 +190,18 @@
       max-width: 300px;
       width: 100%;
       text-align: center;
+    }
+    /* モバイル／タブレットでは体格表ダイアログを全画面に調整 */
+    @media (max-width: 1024px) {
+      #tableDialog {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        transform: none;
+        border-radius: 0;
+        overflow-y: auto;
+      }
     }
     .dialog-container input {
       padding: 10px;
@@ -232,13 +243,11 @@
     // デバイス種別の判別
     function detectDevice() {
       const ua = navigator.userAgent;
-      // iPadまたは、Macでタッチ操作があればタブレットと判断
       const isIpad = /iPad/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
       if (isIpad) return "tablet";
       if (/Mobi|Android/i.test(ua)) return "mobile";
       return "desktop";
     }
-    // 画面の向き判定
     function detectOrientation() {
       return (window.innerWidth > window.innerHeight) ? "landscape" : "portrait";
     }
@@ -246,9 +255,8 @@
     const orientation = detectOrientation();
     document.documentElement.classList.add(deviceType);
     document.documentElement.classList.add(orientation);
-    // リサイズ時に向きを更新
     window.addEventListener('resize', function(){
-      document.documentElement.classList.remove('landscape', 'portrait');
+      document.documentElement.classList.remove('landscape','portrait');
       document.documentElement.classList.add(detectOrientation());
     });
   </script>
@@ -257,7 +265,7 @@
   <!-- オーバーレイ -->
   <div id="overlay"></div>
   
-  <!-- 体格表（PC・デスクトップまたはタブレット横画面の場合） -->
+  <!-- 体格表（パソコン表示・タブレット横画面用） -->
   <div class="table-container">
     <h2 class="title-medium">体格表（回避0のみ）</h2>
     <table>
@@ -288,7 +296,7 @@
     </table>
   </div>
   
-  <!-- QRコード＋その他（選択ボックス等） -->
+  <!-- QRコード＋その他 -->
   <div class="qr-container">
     <div class="qr-message">
       <p class="title-large">電波人間用QRコード生成サイト</p>
@@ -297,7 +305,6 @@
     </div>
     <canvas id="qr-code-canvas" class="qr-code"></canvas>
     <p id="qr-text">生成回数：1</p>
-    <!-- 操作ボタン（デスクトップでは「体格表」ボタンは非表示） -->
     <div class="button-container">
       <button id="regenerate-btn">再生成</button>
       <button id="save-btn-mobile">保存</button>
@@ -457,7 +464,7 @@
   <!-- 保存用ファイル名入力ダイアログ（パソコン用のみ） -->
   <div id="dialog" class="dialog-container">
     <p class="title-medium">ファイル名を入力</p>
-    <p class="title-small">*拡張子は不要です。<br>ファイル名を入力しない場合はそのままENTERを押してください。</p>
+    <p class="title-small">*拡張子は不要です。<br>入力しない場合はそのままENTERを押してください。</p>
     <input type="text" id="filename-input" placeholder="ファイル名を入力">
     <div style="display: flex; gap: 2%;">
       <button id="save-btn">完了</button>
@@ -465,7 +472,7 @@
     </div>
   </div>
   
-  <!-- 体格表ダイアログ（必要に応じて） -->
+  <!-- 体格表ダイアログ（モバイル／タブレット用：全画面表示） -->
   <div id="tableDialog" class="dialog-container">
     <p class="title-medium">体格表（回避0のみ）</p>
     <table>
@@ -552,7 +559,7 @@
       });
     }
     
-    // 履歴表示：画像を右端、テキストは「・生成No.○○」で横並び・中央揃え
+    // 履歴表示：テキストと画像を横並び、テキストは「・生成No.○○」
     function addToHistory(qrData, qrString, qrCodeText) {
       savedQRs.push({ qrData, qrString, qrCodeText });
       const listItem = document.createElement('li');
@@ -567,7 +574,8 @@
       historyList.insertBefore(listItem, historyList.firstChild);
     }
     
-    // 保存処理
+    // 保存処理：デスクトップは従来通り、モバイル・タブレットでは
+    // iOSならWeb Share API、Androidならダウンロード方式に戻す
     function saveQRCode() {
       const avoidance = document.getElementById('avoidanceSelect').value;
       const physique = document.getElementById('physiqueSelect').value;
@@ -606,9 +614,10 @@
       }
       combinedCtx.drawImage(qrCanvas, 0, textAreaHeight);
     
-      // デバイス種別で保存方法を分岐
-      if(document.documentElement.classList.contains('desktop')) {
-        // パソコン表示：従来通りファイル名入力ダイアログ経由でダウンロード
+      const isDesktop = document.documentElement.classList.contains('desktop');
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      // デスクトップ：ファイル名入力ダイアログ経由（従来通り）
+      if(isDesktop) {
         combinedCanvas.toBlob(function(blob) {
           const fileName = (filenameInput.value.trim() || currentQRData) + '.png';
           const a = document.createElement('a');
@@ -620,20 +629,34 @@
           hideSaveDialog();
         });
       } else {
-        // スマホ・タブレット表示：ファイル名入力ダイアログ省略しWeb Share APIで保存（シェア）
-        combinedCanvas.toBlob(function(blob) {
-          const fileName = currentQRData + '.png';
-          const file = new File([blob], fileName, {type: blob.type});
-          if(navigator.canShare && navigator.canShare({files: [file]})) {
-            navigator.share({files: [file]})
-              .then(() => console.log("共有成功"))
-              .catch(err => console.error("共有失敗", err));
-          } else {
-            // シェアAPI非対応の場合は、新規タブで画像を表示
+        // モバイル／タブレット
+        // Android：ダウンロード方式
+        if(isAndroid) {
+          combinedCanvas.toBlob(function(blob) {
+            const fileName = currentQRData + '.png';
+            const a = document.createElement('a');
             const url = URL.createObjectURL(blob);
-            window.open(url, '_blank');
-          }
-        });
+            a.href = url;
+            a.download = fileName;
+            a.click();
+            setTimeout(() => { URL.revokeObjectURL(url); }, 100);
+          });
+        } else {
+          // iOS：Web Share API（シェア画面経由で保存）
+          combinedCanvas.toBlob(function(blob) {
+            const fileName = currentQRData + '.png';
+            const file = new File([blob], fileName, {type: blob.type});
+            if(navigator.canShare && navigator.canShare({files: [file]})) {
+              navigator.share({files: [file]})
+                .then(() => console.log("共有成功"))
+                .catch(err => console.error("共有失敗", err));
+            } else {
+              // シェアAPI非対応の場合は、新規タブで画像表示
+              const url = URL.createObjectURL(blob);
+              window.open(url, '_blank');
+            }
+          });
+        }
       }
     }
     
@@ -667,7 +690,7 @@
           isDialogVisible = true;
         }, 100);
       } else {
-        // スマホ・タブレットの場合は即時保存（ダイアログ省略）
+        // スマホ・タブレット：ダイアログ省略して即時保存
         saveQRCode();
       }
     }
@@ -679,6 +702,7 @@
     }
     
     function showTableDialog() {
+      // モバイル・タブレットの場合は、体格表ダイアログを全画面表示（サイドバー風にするのが難しい場合の代替）
       overlay.style.display = 'block';
       tableDialog.style.display = 'block';
     }
