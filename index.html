@@ -98,8 +98,10 @@
       white-space: nowrap;
     }
     /* ヘッダーセルの固定幅 */
-    #antennaTableContainer th.antenna, #dialogTableArea th.antenna { min-width: 5ch; }
-    #antennaTableContainer th.data, #dialogTableArea th.data { min-width: 4ch; }
+    #antennaTableContainer th.antenna,
+    #dialogTableArea th.antenna { min-width: 5ch; }
+    #antennaTableContainer th.data,
+    #dialogTableArea th.data { min-width: 4ch; }
     /* QRコンテナ */
     .qr-container {
       text-align: center;
@@ -211,15 +213,15 @@
       gap: 10px;
       margin-top: 10px;
     }
-    /* チェックボックスエリア（ダイアログ内）：横並びに */
-    #dialogCheckboxContainer {
+    /* データ選択ダイアログ内のチェックボックスエリア（横並び） */
+    #dataSelectionCheckboxContainer {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       justify-content: center;
       margin-bottom: 10px;
     }
-    #dialogCheckboxContainer label {
+    #dataSelectionCheckboxContainer label {
       display: flex;
       align-items: center;
       gap: 5px;
@@ -227,7 +229,7 @@
     }
     /* Desktop：体格表ボタン非表示 */
     .desktop #table-btn { display: none; }
-    /* ダイアログ（保存用、体格表用） */
+    /* ダイアログ（保存用、体格表用、データ選択用） */
     .dialog-container {
       display: none;
       position: fixed;
@@ -324,7 +326,7 @@
   <div class="table-container">
     <h2 class="title-medium">体格表</h2>
     <div id="antennaTableContainer"></div>
-    <!-- チェックボックスを表の下部に縦並び -->
+    <!-- PC版用チェックボックス（常時表示） -->
     <div id="columnOptions">
       <div><label><input type="checkbox" value="回避0最大" checked> 回避0最大</label></div>
       <div><label><input type="checkbox" value="回避3+最大"> 回避3+最大</label></div>
@@ -514,19 +516,24 @@
   <!-- 体格表ダイアログ（モバイル／タブレット用：全画面→中央・高さ制限・縦スクロール対応） -->
   <div id="tableDialog" class="dialog-container">
     <p class="title-medium">体格表（回避表）</p>
-    <!-- ダイアログ内コンテンツ -->
-    <div id="tableDialogContent">
-      <!-- チェックボックスエリア（初期は非表示） -->
-      <div id="dialogCheckboxContainer" style="display: none;">
-        <!-- PC版のチェックボックスをコピー -->
-      </div>
-      <!-- 表示エリア -->
-      <div id="dialogTableArea"></div>
-    </div>
-    <!-- ボタンコンテナ：表示データの選択 / 閉じる -->
+    <!-- 表示エリア -->
+    <div id="dialogTableArea"></div>
+    <!-- ダイアログ下部ボタン：「表示データの選択」／「閉じる」 -->
     <div id="dialogButtons">
       <button id="selectDataBtn">表示データの選択</button>
       <button id="closeTableBtn">閉じる</button>
+    </div>
+  </div>
+  
+  <!-- データ選択ダイアログ（スマホ／タブレット用） -->
+  <div id="dataSelectionDialog" class="dialog-container">
+    <p class="title-medium">データの選択</p>
+    <div id="dataSelectionCheckboxContainer">
+      <!-- PC版チェックボックス内容をここに動的に表示 -->
+    </div>
+    <div id="dataSelectionButtons" style="display: flex; justify-content: space-around; gap: 10px;">
+      <button id="dataSelectionCancelBtn" class="cancel-btn">キャンセル</button>
+      <button id="dataSelectionSaveBtn">保存</button>
     </div>
   </div>
   
@@ -551,12 +558,17 @@
     const regenerateBtn = document.getElementById('regenerate-btn');
     const saveBtnMobile = document.getElementById('save-btn-mobile');
     const tableBtn = document.getElementById('table-btn');
-    const tableDialog = document.getElementById('tableDialog');
     const featureSelect = document.getElementById('featureSelect');
     const featureOtherInput = document.getElementById('featureOtherInput');
     const overlay = document.getElementById('overlay');
     
     let isDialogVisible = false;
+    
+    // グローバルな選択状態（初期はPC版#columnOptionsから取得）
+    let globalSelection = {};
+    document.querySelectorAll("#columnOptions input[type=checkbox]").forEach(chk => {
+      globalSelection[chk.value] = chk.checked;
+    });
     
     featureSelect.addEventListener('change', function() {
       featureOtherInput.style.display = (this.value === "その他") ? "block" : "none";
@@ -584,7 +596,7 @@
       });
     }
     
-    // 履歴表示：テキストと画像を横並び、「・生成No.○○」形式
+    // 履歴表示
     function addToHistory(qrData, qrString, qrCodeText) {
       savedQRs.push({ qrData, qrString, qrCodeText });
       const listItem = document.createElement('li');
@@ -599,7 +611,7 @@
       historyList.insertBefore(listItem, historyList.firstChild);
     }
     
-    // 保存処理：Desktop は従来方式、モバイル／タブレットは端末別分岐
+    // 保存処理
     function saveQRCode() {
       const avoidance = document.getElementById('avoidanceSelect').value;
       const physique = document.getElementById('physiqueSelect').value;
@@ -719,15 +731,13 @@
       isDialogVisible = false;
     }
     
-    /* --- ダイアログ内体格表レンダリング --- */
+    /* --- 体格表ダイアログ内テーブル生成（グローバル選択状態を使用） --- */
     function renderAntennaTableDialog() {
       const container = document.getElementById("dialogTableArea");
-      // ダイアログ内チェックボックスは「dialogCheckboxContainer」内のものを利用
-      const checkboxes = document.querySelectorAll("#dialogCheckboxContainer input[type=checkbox]");
       let selectedColumns = [];
-      checkboxes.forEach(chk => {
-        if(chk.checked) selectedColumns.push(chk.value);
-      });
+      for(let key in globalSelection) {
+        if(globalSelection[key]) selectedColumns.push(key);
+      }
       
       let html = "<table><thead><tr><th class='antenna' style='min-width:5ch;'>アンテナ</th>";
       selectedColumns.forEach(col => {
@@ -747,48 +757,67 @@
       container.innerHTML = html;
     }
     
-    // ダイアログ表示時の体格表生成
+    // 体格表ダイアログ表示
     function showTableDialog() {
       overlay.style.display = 'block';
       tableDialog.style.display = 'block';
-      
-      // チェックボックスエリア：PC版の#columnOptionsの内容をコピー
-      const dialogCheckboxContainer = document.getElementById("dialogCheckboxContainer");
-      dialogCheckboxContainer.innerHTML = document.getElementById("columnOptions").innerHTML;
-      // チェックボックスを横並びにするためにラベルのスタイルを活かす（CSSで調整済み）
-      // イベントバインド
-      document.querySelectorAll("#dialogCheckboxContainer input[type=checkbox]").forEach(chk => {
-        chk.addEventListener("change", renderAntennaTableDialog);
-      });
-      
-      // 初回はチェックボックスエリアは非表示（「表示データの選択」ボタンで表示切替）
-      dialogCheckboxContainer.style.display = "none";
-      // 初回レンダリング
       renderAntennaTableDialog();
     }
     
-    // ダイアログ下部の「表示データの選択」ボタンのトグル処理
+    // 「表示データの選択」ボタン（スマホ／タブレット用）→新規「データの選択」ダイアログを表示
+    function openDataSelectionDialog() {
+      // populateデータ選択ダイアログのチェックボックスエリア
+      const container = document.getElementById("dataSelectionCheckboxContainer");
+      container.innerHTML = "";
+      // 元のPC版チェックボックス（#columnOptions）から各項目を作成
+      document.querySelectorAll("#columnOptions input[type=checkbox]").forEach(chk => {
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.value = chk.value;
+        // 既に保存されている選択状態を反映（なければPC版の状態）
+        input.checked = (globalSelection[chk.value] !== undefined) ? globalSelection[chk.value] : chk.checked;
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(" " + chk.value));
+        container.appendChild(label);
+      });
+      document.getElementById("dataSelectionDialog").style.display = "block";
+    }
+    
+    // データ選択ダイアログの「キャンセル」→変更を破棄して閉じる
+    document.getElementById("dataSelectionCancelBtn").addEventListener("click", function(){
+      document.getElementById("dataSelectionDialog").style.display = "none";
+    });
+    
+    // データ選択ダイアログの「保存」→チェック状態をglobalSelectionに保存し、体格表ダイアログを更新
+    document.getElementById("dataSelectionSaveBtn").addEventListener("click", function(){
+      document.querySelectorAll("#dataSelectionCheckboxContainer input[type=checkbox]").forEach(chk => {
+        globalSelection[chk.value] = chk.checked;
+      });
+      renderAntennaTableDialog();
+      document.getElementById("dataSelectionDialog").style.display = "none";
+    });
+    
+    // イベントバインド
     document.getElementById("selectDataBtn").addEventListener("click", function(){
-      const container = document.getElementById("dialogCheckboxContainer");
-      if(container.style.display === "none") {
-        container.style.display = "flex";
+      // スマホ／タブレットの場合は新規ダイアログを開く
+      if(document.documentElement.classList.contains('desktop')) {
+        // PC版の場合は（必要ならトグル表示など）
       } else {
-        container.style.display = "none";
+        openDataSelectionDialog();
       }
     });
     
-    function hideTableDialog() {
+    document.getElementById("closeTableBtn").addEventListener("click", function(){
       tableDialog.style.display = 'none';
       overlay.style.display = 'none';
-    }
+    });
     
-    // イベントバインド
     saveBtn.addEventListener('click', saveQRCode);
     cancelBtn.addEventListener('click', hideSaveDialog);
     document.getElementById('regenerate-btn').addEventListener('click', generateQRCode);
     saveBtnMobile.addEventListener('click', showSaveDialog);
     if(tableBtn) { tableBtn.addEventListener('click', showTableDialog); }
-    document.getElementById('closeTableBtn').addEventListener('click', hideTableDialog);
     
     window.addEventListener('keydown', function (e) {
       const activeTag = document.activeElement.tagName;
@@ -829,7 +858,7 @@
       { antenna: "足元ガード", "回避0最大": "35", "回避3+最大": "32", "回避3-最大": "30", "回避0最速": "25", "回避3+最速": "22", "回避3-最速": "20", "備考": "回避+1" }
     ];
     
-    // ヘッダー用フォーマット関数：指定の値の場合に <br> を挿入
+    // ヘッダー用フォーマット
     function formatHeader(text) {
       if(text === "回避0最速") return "回避0<br>最速";
       if(text === "回避0最大") return "回避0<br>最大";
