@@ -136,12 +136,14 @@
     }
     /* チェックボックスエリア：体格表下部に縦並び */
     #columnOptions {
-      text-align: center;
-      margin-top: 10px;
-    }
-    #columnOptions div {
-      margin-bottom: 5px;
-    }
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* チェックボックス間の余白 */
+    max-width: 300px; /* 適切な幅を設定 */
+  }
+  #columnOptions div {
+    width: calc(100% / 3 - 10px); /* 3列表示 */
+  }
     /* 履歴エリア */
     .history {
       max-width: 400px;
