@@ -135,14 +135,14 @@
     }
     /* チェックボックスエリア：体格表下部に縦並び */
     #columnOptions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px; /* チェックボックス間の余白 */
-    max-width: 500px; /* 適切な幅を設定 */
-  }
-  #columnOptions div {
-    width: calc(100% / 4 - 10px); /* 4列表示 */
-  }
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px; /* チェックボックス間の余白 */
+      max-width: 500px; /* 適切な幅を設定 */
+    }
+    #columnOptions div {
+      width: calc(100% / 4 - 10px); /* 4列表示 */
+    }
     /* 履歴エリア */
     .history {
       max-width: 300px;
@@ -480,6 +480,7 @@
   <!-- 体格表ダイアログ（モバイル／タブレット用：全画面→中央・高さ制限・縦スクロール対応） -->
   <div id="tableDialog" class="dialog-container">
     <p class="title-medium">体格表（回避表）</p>
+    <!-- 以下の内容を動的に生成します -->
     <div id="tableDialogContent"></div>
     <button id="closeTableBtn">閉じる</button>
   </div>
@@ -674,11 +675,51 @@
       isDialogVisible = false;
     }
     
+    /* --- ダイアログ内での体格表レンダリング（チェックボックスによる可変表示） --- */
+    function renderAntennaTableDialog() {
+      const container = document.getElementById("dialogAntennaTableContainer");
+      const checkboxContainer = document.getElementById("dialogColumnOptions");
+      const checkboxes = checkboxContainer.querySelectorAll("input[type=checkbox]");
+      let selectedColumns = [];
+      checkboxes.forEach(chk => {
+        if(chk.checked) selectedColumns.push(chk.value);
+      });
+      
+      let html = "<table><thead><tr><th class='antenna' style='min-width:5ch;'>アンテナ</th>";
+      selectedColumns.forEach(col => {
+        html += "<th class='data' style='min-width:4ch;'>" + formatHeader(col) + "</th>";
+      });
+      html += "</tr></thead><tbody>";
+      
+      antennaData.forEach(row => {
+        html += "<tr><td class='antenna'>" + row.antenna + "</td>";
+        selectedColumns.forEach(col => {
+          html += "<td class='data'>" + row[col] + "</td>";
+        });
+        html += "</tr>";
+      });
+      
+      html += "</tbody></table>";
+      container.innerHTML = html;
+    }
+    
+    // ダイアログ表示時の体格表生成（PCのチェックボックス内容をコピーして利用）
     function showTableDialog() {
       overlay.style.display = 'block';
       tableDialog.style.display = 'block';
-      renderAntennaTable();
-      document.getElementById("tableDialogContent").innerHTML = document.getElementById("antennaTableContainer").innerHTML;
+      
+      const dialogContent = document.getElementById("tableDialogContent");
+      const originalCheckboxHTML = document.getElementById("columnOptions").innerHTML;
+      dialogContent.innerHTML = `
+        <div id="dialogColumnOptions">${originalCheckboxHTML}</div>
+        <div id="dialogAntennaTableContainer"></div>
+      `;
+      // ダイアログ内のチェックボックスに対してイベントをバインド
+      document.querySelectorAll("#dialogColumnOptions input[type=checkbox]").forEach(chk => {
+        chk.addEventListener("change", renderAntennaTableDialog);
+      });
+      // 初回レンダリング
+      renderAntennaTableDialog();
     }
     function hideTableDialog() {
       tableDialog.style.display = 'none';
@@ -710,7 +751,7 @@
     
     generateQRCode();
     
-    /* --- 体格表データとテーブル生成 --- */
+    /* --- 体格表データとPC版テーブル生成 --- */
     const antennaData = [
       { antenna: "アンテナ無", "回避0最大": "40", "回避3+最大": "37", "回避3-最大": "34", "回避0最速": "29", "回避3+最速": "26", "回避3-最速": "24", "備考": "" },
       { antenna: "単体攻撃", "回避0最大": "33", "回避3+最大": "31", "回避3-最大": "29", "回避0最速": "24", "回避3+最速": "22", "回避3-最速": "20", "備考": "火水:HP+1<br>風光:回避+1" },
