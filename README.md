@@ -12,7 +12,7 @@
 -   **説明文の追加**: QRコードの下の選択ボタンから、電波人間の情報を選択すると、保存画像に情報が出力されます。
 
 ### その他
-- 体格表は、[https://kokorogu.com/new-denpa-11](https://kokorogu.com/new-denpa-11) を参考にしています。
+- 体格表は、[https://x.com/nMyon_denpa/status/1834236595949711786/photo/1](https://x.com/nMyon_denpa/status/1834236595949711786/photo/1)を参考にしています。
 - スマホ版では、「体格表」ボタンをクリックすると、体格表が表示されます。
 - 今回、ツールの作成にあたり、みずろく様（[@mizu6g](https://x.com/mizu6g)）の公開しているWebサイト[https://yukine8.github.io/denpa-qr-generator](https://yukine8.github.io/denpa-qr-generator)を参考にさせて頂いております。本人様からの許可により、MITライセンスを保持する事を条件に改修及び機能の追加を行っております。
 -   QRコードは、X（Twitter）やDiscordで自由にシェアして下さい。
