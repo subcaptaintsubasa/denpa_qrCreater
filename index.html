@@ -29,19 +29,15 @@
     /* --- Desktop 表示 --- */
     .desktop .table-container {
       order: 1;
-      width: 51%;
+      width: 35%;
     }
     .desktop .qr-container {
       order: 2;
-      width: 40%;
-      margin-left: 5%;
-      margin-right: 5%;
+      width: 50%;
     }
     .desktop .history {
       order: 3;
-      width: 9%;
-      margin-left: 3%;
-      margin-right: 3%;
+      width: 15%;
     }
     /* --- タブレット 横画面 --- */
     .tablet.landscape .table-container {
@@ -300,7 +296,6 @@
       <div><label><input type="checkbox" value="回避0最速" checked> 回避0最速</label></div>
       <div><label><input type="checkbox" value="回避3+最速"> 回避3+最速</label></div>
       <div><label><input type="checkbox" value="回避3-最速"> 回避3-最速</label></div>
-      <div><label><input type="checkbox" value="備考" checked> 備考</label></div>
     </div>
   </div>
   
@@ -679,8 +674,8 @@
     function showTableDialog() {
       overlay.style.display = 'block';
       tableDialog.style.display = 'block';
-      // スマホ／タブレットでもパソコンと同様のチェックボックス式体格表を表示するため、.table-container全体をコピー
-      document.getElementById("tableDialogContent").innerHTML = document.querySelector(".table-container").innerHTML;
+      renderAntennaTable();
+      document.getElementById("tableDialogContent").innerHTML = document.getElementById("antennaTableContainer").innerHTML;
     }
     function hideTableDialog() {
       tableDialog.style.display = 'none';
@@ -761,7 +756,7 @@
       antennaData.forEach(row => {
         html += "<tr><td class='antenna'>" + row.antenna + "</td>";
         selectedColumns.forEach(col => {
-          html += "<td class='data'>" + (row[col] || "") + "</td>";
+          html += "<td class='data'>" + row[col] + "</td>";
         });
         html += "</tr>";
       });
