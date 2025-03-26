@@ -528,7 +528,7 @@
     function generateQRCode() {
       const ctx = qrCanvas.getContext('2d');
       ctx.clearRect(0, 0, qrCanvas.width, qrCanvas.height);
-      const qrCodeText = generateRandomString(126);
+      const qrCodeText = generateRandomString(125);
       QRCode.toCanvas(qrCanvas, qrCodeText, function (error) {
         if (error) console.error(error);
         currentQRData = qrCodeText;
