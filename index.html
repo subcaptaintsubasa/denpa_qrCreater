@@ -213,19 +213,21 @@
       gap: 10px;
       margin-top: 10px;
     }
-    /* データ選択ダイアログ内のチェックボックスエリア（縦並びに） */
+    /* データ選択ダイアログ内のチェックボックスエリア（横並びに） */
     #dataSelectionCheckboxContainer {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      flex-wrap: wrap;
       gap: 10px;
-      align-items: center;
+      justify-content: center;
       margin-bottom: 10px;
-      /* ダイアログ内がスクロールしないよう高さを自動調整 */
-      max-height: 200px;
+      /* ダイアログの大きさは体格表ダイアログと同じくらいの高さ */
+      max-height: 90vh;
       overflow-y: auto;
     }
     #dataSelectionCheckboxContainer label {
       font-size: 14px;
+      /* 横並びの場合、チェックボックスとテキストは自動的に横に配置されます */
     }
     /* Desktop：体格表ボタン非表示 */
     .desktop #table-btn { display: none; }
@@ -526,7 +528,7 @@
   </div>
   
   <!-- データ選択ダイアログ（スマホ／タブレット用） -->
-  <div id="dataSelectionDialog" class="dialog-container" style="max-height: 80vh; overflow-y: auto;">
+  <div id="dataSelectionDialog" class="dialog-container" style="max-height: 90vh; overflow-y: auto;">
     <p class="title-medium">データの選択</p>
     <div id="dataSelectionCheckboxContainer">
       <!-- PC版チェックボックス内容をここに動的に表示 -->
@@ -767,11 +769,11 @@
     /* --- データ選択ダイアログ処理 --- */
     // 開くと同時に、体格表ダイアログの操作をロックする
     function openDataSelectionDialog() {
-      // ロック：体格表ダイアログの pointer-events を無効化
+      // ロック：体格表ダイアログの操作を無効化
       tableDialog.style.pointerEvents = "none";
       const container = document.getElementById("dataSelectionCheckboxContainer");
       container.innerHTML = "";
-      // PC版チェックボックス（#columnOptions）から各項目を作成
+      // PC版チェックボックス（#columnOptions）から各項目を作成（横並び）
       document.querySelectorAll("#columnOptions input[type=checkbox]").forEach(chk => {
         const label = document.createElement("label");
         const input = document.createElement("input");
