@@ -152,11 +152,11 @@
     #columnOptions {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px; /* チェックボックス間の余白 */
-      max-width: 500px; /* 適切な幅を設定 */
+      gap: 10px;
+      max-width: 500px;
     }
     #columnOptions div {
-      width: calc(100% / 4 - 10px); /* 4列表示 */
+      width: calc(100% / 4 - 10px);
     }
     /* 履歴エリア */
     .history {
@@ -213,18 +213,18 @@
       gap: 10px;
       margin-top: 10px;
     }
-    /* データ選択ダイアログ内のチェックボックスエリア（横並び） */
+    /* データ選択ダイアログ内のチェックボックスエリア（縦並びに） */
     #dataSelectionCheckboxContainer {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
       gap: 10px;
-      justify-content: center;
+      align-items: center;
       margin-bottom: 10px;
+      /* ダイアログ内がスクロールしないよう高さを自動調整 */
+      max-height: 200px;
+      overflow-y: auto;
     }
     #dataSelectionCheckboxContainer label {
-      display: flex;
-      align-items: center;
-      gap: 5px;
       font-size: 14px;
     }
     /* Desktop：体格表ボタン非表示 */
@@ -513,7 +513,7 @@
     </div>
   </div>
   
-  <!-- 体格表ダイアログ（モバイル／タブレット用：全画面→中央・高さ制限・縦スクロール対応） -->
+  <!-- 体格表ダイアログ（モバイル／タブレット用） -->
   <div id="tableDialog" class="dialog-container">
     <p class="title-medium">体格表（回避表）</p>
     <!-- 表示エリア -->
@@ -526,7 +526,7 @@
   </div>
   
   <!-- データ選択ダイアログ（スマホ／タブレット用） -->
-  <div id="dataSelectionDialog" class="dialog-container">
+  <div id="dataSelectionDialog" class="dialog-container" style="max-height: 80vh; overflow-y: auto;">
     <p class="title-medium">データの選択</p>
     <div id="dataSelectionCheckboxContainer">
       <!-- PC版チェックボックス内容をここに動的に表示 -->
@@ -731,7 +731,7 @@
       isDialogVisible = false;
     }
     
-    /* --- 体格表ダイアログ内テーブル生成（グローバル選択状態を使用） --- */
+    /* --- 体格表ダイアログ内テーブル生成（globalSelection を使用） --- */
     function renderAntennaTableDialog() {
       const container = document.getElementById("dialogTableArea");
       let selectedColumns = [];
@@ -764,18 +764,20 @@
       renderAntennaTableDialog();
     }
     
-    // 「表示データの選択」ボタン（スマホ／タブレット用）→新規「データの選択」ダイアログを表示
+    /* --- データ選択ダイアログ処理 --- */
+    // 開くと同時に、体格表ダイアログの操作をロックする
     function openDataSelectionDialog() {
-      // populateデータ選択ダイアログのチェックボックスエリア
+      // ロック：体格表ダイアログの pointer-events を無効化
+      tableDialog.style.pointerEvents = "none";
       const container = document.getElementById("dataSelectionCheckboxContainer");
       container.innerHTML = "";
-      // 元のPC版チェックボックス（#columnOptions）から各項目を作成
+      // PC版チェックボックス（#columnOptions）から各項目を作成
       document.querySelectorAll("#columnOptions input[type=checkbox]").forEach(chk => {
         const label = document.createElement("label");
         const input = document.createElement("input");
         input.type = "checkbox";
         input.value = chk.value;
-        // 既に保存されている選択状態を反映（なければPC版の状態）
+        // 既に保存されている選択状態を反映
         input.checked = (globalSelection[chk.value] !== undefined) ? globalSelection[chk.value] : chk.checked;
         label.appendChild(input);
         label.appendChild(document.createTextNode(" " + chk.value));
@@ -784,30 +786,32 @@
       document.getElementById("dataSelectionDialog").style.display = "block";
     }
     
-    // データ選択ダイアログの「キャンセル」→変更を破棄して閉じる
+    // データ選択ダイアログの「キャンセル」→変更破棄＆ロック解除
     document.getElementById("dataSelectionCancelBtn").addEventListener("click", function(){
       document.getElementById("dataSelectionDialog").style.display = "none";
+      tableDialog.style.pointerEvents = "";
     });
     
-    // データ選択ダイアログの「保存」→チェック状態をglobalSelectionに保存し、体格表ダイアログを更新
+    // データ選択ダイアログの「保存」→グローバルに保存＆体格表更新＆ロック解除
     document.getElementById("dataSelectionSaveBtn").addEventListener("click", function(){
       document.querySelectorAll("#dataSelectionCheckboxContainer input[type=checkbox]").forEach(chk => {
         globalSelection[chk.value] = chk.checked;
       });
       renderAntennaTableDialog();
       document.getElementById("dataSelectionDialog").style.display = "none";
+      tableDialog.style.pointerEvents = "";
     });
     
-    // イベントバインド
+    // 「表示データの選択」ボタン押下時
     document.getElementById("selectDataBtn").addEventListener("click", function(){
-      // スマホ／タブレットの場合は新規ダイアログを開く
       if(document.documentElement.classList.contains('desktop')) {
-        // PC版の場合は（必要ならトグル表示など）
+        // PC版の場合は必要に応じて処理（今回は何もしない）
       } else {
         openDataSelectionDialog();
       }
     });
     
+    // 体格表ダイアログの「閉じる」ボタン
     document.getElementById("closeTableBtn").addEventListener("click", function(){
       tableDialog.style.display = 'none';
       overlay.style.display = 'none';
@@ -858,7 +862,7 @@
       { antenna: "足元ガード", "回避0最大": "35", "回避3+最大": "32", "回避3-最大": "30", "回避0最速": "25", "回避3+最速": "22", "回避3-最速": "20", "備考": "回避+1" }
     ];
     
-    // ヘッダー用フォーマット
+    // ヘッダー用フォーマット関数
     function formatHeader(text) {
       if(text === "回避0最速") return "回避0<br>最速";
       if(text === "回避0最大") return "回避0<br>最大";
