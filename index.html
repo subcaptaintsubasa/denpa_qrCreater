@@ -84,9 +84,22 @@
       text-align: center;
       white-space: nowrap;
     }
+    /* ダイアログ内テーブル用 */
+    #dialogTableArea table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid #ccc;
+    }
+    #dialogTableArea th,
+    #dialogTableArea td {
+      border: 1px solid #ccc;
+      padding: 4px;
+      text-align: center;
+      white-space: nowrap;
+    }
     /* ヘッダーセルの固定幅 */
-    #antennaTableContainer th.antenna { min-width: 5ch; }
-    #antennaTableContainer th.data { min-width: 4ch; }
+    #antennaTableContainer th.antenna, #dialogTableArea th.antenna { min-width: 5ch; }
+    #antennaTableContainer th.data, #dialogTableArea th.data { min-width: 4ch; }
     /* QRコンテナ */
     .qr-container {
       text-align: center;
@@ -190,6 +203,27 @@
       padding: 10px 15px;
       font-size: 16px;
       cursor: pointer;
+    }
+    /* ダイアログ下部のボタンコンテナ */
+    #dialogButtons {
+      display: flex;
+      justify-content: space-around;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    /* チェックボックスエリア（ダイアログ内）：横並びに */
+    #dialogCheckboxContainer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+    #dialogCheckboxContainer label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 14px;
     }
     /* Desktop：体格表ボタン非表示 */
     .desktop #table-btn { display: none; }
@@ -480,9 +514,20 @@
   <!-- 体格表ダイアログ（モバイル／タブレット用：全画面→中央・高さ制限・縦スクロール対応） -->
   <div id="tableDialog" class="dialog-container">
     <p class="title-medium">体格表（回避表）</p>
-    <!-- 以下の内容を動的に生成します -->
-    <div id="tableDialogContent"></div>
-    <button id="closeTableBtn">閉じる</button>
+    <!-- ダイアログ内コンテンツ -->
+    <div id="tableDialogContent">
+      <!-- チェックボックスエリア（初期は非表示） -->
+      <div id="dialogCheckboxContainer" style="display: none;">
+        <!-- PC版のチェックボックスをコピー -->
+      </div>
+      <!-- 表示エリア -->
+      <div id="dialogTableArea"></div>
+    </div>
+    <!-- ボタンコンテナ：表示データの選択 / 閉じる -->
+    <div id="dialogButtons">
+      <button id="selectDataBtn">表示データの選択</button>
+      <button id="closeTableBtn">閉じる</button>
+    </div>
   </div>
   
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
@@ -507,7 +552,6 @@
     const saveBtnMobile = document.getElementById('save-btn-mobile');
     const tableBtn = document.getElementById('table-btn');
     const tableDialog = document.getElementById('tableDialog');
-    const closeTableBtn = document.getElementById('closeTableBtn');
     const featureSelect = document.getElementById('featureSelect');
     const featureOtherInput = document.getElementById('featureOtherInput');
     const overlay = document.getElementById('overlay');
@@ -675,11 +719,11 @@
       isDialogVisible = false;
     }
     
-    /* --- ダイアログ内での体格表レンダリング（チェックボックスによる可変表示） --- */
+    /* --- ダイアログ内体格表レンダリング --- */
     function renderAntennaTableDialog() {
-      const container = document.getElementById("dialogAntennaTableContainer");
-      const checkboxContainer = document.getElementById("dialogColumnOptions");
-      const checkboxes = checkboxContainer.querySelectorAll("input[type=checkbox]");
+      const container = document.getElementById("dialogTableArea");
+      // ダイアログ内チェックボックスは「dialogCheckboxContainer」内のものを利用
+      const checkboxes = document.querySelectorAll("#dialogCheckboxContainer input[type=checkbox]");
       let selectedColumns = [];
       checkboxes.forEach(chk => {
         if(chk.checked) selectedColumns.push(chk.value);
@@ -703,35 +747,48 @@
       container.innerHTML = html;
     }
     
-    // ダイアログ表示時の体格表生成（PCのチェックボックス内容をコピーして利用）
+    // ダイアログ表示時の体格表生成
     function showTableDialog() {
       overlay.style.display = 'block';
       tableDialog.style.display = 'block';
       
-      const dialogContent = document.getElementById("tableDialogContent");
-      const originalCheckboxHTML = document.getElementById("columnOptions").innerHTML;
-      dialogContent.innerHTML = `
-        <div id="dialogColumnOptions">${originalCheckboxHTML}</div>
-        <div id="dialogAntennaTableContainer"></div>
-      `;
-      // ダイアログ内のチェックボックスに対してイベントをバインド
-      document.querySelectorAll("#dialogColumnOptions input[type=checkbox]").forEach(chk => {
+      // チェックボックスエリア：PC版の#columnOptionsの内容をコピー
+      const dialogCheckboxContainer = document.getElementById("dialogCheckboxContainer");
+      dialogCheckboxContainer.innerHTML = document.getElementById("columnOptions").innerHTML;
+      // チェックボックスを横並びにするためにラベルのスタイルを活かす（CSSで調整済み）
+      // イベントバインド
+      document.querySelectorAll("#dialogCheckboxContainer input[type=checkbox]").forEach(chk => {
         chk.addEventListener("change", renderAntennaTableDialog);
       });
+      
+      // 初回はチェックボックスエリアは非表示（「表示データの選択」ボタンで表示切替）
+      dialogCheckboxContainer.style.display = "none";
       // 初回レンダリング
       renderAntennaTableDialog();
     }
+    
+    // ダイアログ下部の「表示データの選択」ボタンのトグル処理
+    document.getElementById("selectDataBtn").addEventListener("click", function(){
+      const container = document.getElementById("dialogCheckboxContainer");
+      if(container.style.display === "none") {
+        container.style.display = "flex";
+      } else {
+        container.style.display = "none";
+      }
+    });
+    
     function hideTableDialog() {
       tableDialog.style.display = 'none';
       overlay.style.display = 'none';
     }
     
+    // イベントバインド
     saveBtn.addEventListener('click', saveQRCode);
     cancelBtn.addEventListener('click', hideSaveDialog);
-    regenerateBtn.addEventListener('click', generateQRCode);
+    document.getElementById('regenerate-btn').addEventListener('click', generateQRCode);
     saveBtnMobile.addEventListener('click', showSaveDialog);
     if(tableBtn) { tableBtn.addEventListener('click', showTableDialog); }
-    closeTableBtn.addEventListener('click', hideTableDialog);
+    document.getElementById('closeTableBtn').addEventListener('click', hideTableDialog);
     
     window.addEventListener('keydown', function (e) {
       const activeTag = document.activeElement.tagName;
