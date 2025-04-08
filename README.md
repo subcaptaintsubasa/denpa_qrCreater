@@ -17,7 +17,7 @@
 - 今回、ツールの作成にあたり、みずろく様（[@mizu6g](https://x.com/mizu6g)）の公開しているWebサイト[https://yukine8.github.io/denpa-qr-generator](https://yukine8.github.io/denpa-qr-generator)を参考にさせて頂いております。本人様からの承諾を頂き、MITライセンスを保持する事を条件に改修及び機能の追加を行っております。
 -   QRコードは、X（Twitter）やDiscordで自由にシェア頂いて構いません。（サイトのＵＲＬ等の記載は、宣伝上行って頂けたら有難いですが、任意です。）
 -   サイトの利用の際は、商用利用しないこと（QRコードの販売等）と無断転載しないことを遵守して下さい。<br>youtubeで紹介する際や、まとめサイト等のWebサイトに載せる場合、コードを編集するなどして新たにサイトを作成する場合等は相談頂ければ基本的には許可します。
--   #連絡先：「副キャプテン翼」Xアカウント（[@subcaptain_yfm](https://x.com/subcaptain_yfm) ）、Disscord（[@fukuyakaputenyoku](https://discordapp.com/users/1109485950008045579) ）、またはGit HubのIssues
+-   ✉連絡先：「副キャプテン翼」Xアカウント（[@subcaptain_yfm](https://x.com/subcaptain_yfm) ）、Disscord（[@fukuyakaputenyoku](https://discordapp.com/users/1109485950008045579) ）、またはGit HubのIssues
 
 ### 貢献
 バグ報告や機能追加のリクエスト等も、上記連絡先のいずれかにお願いします。
