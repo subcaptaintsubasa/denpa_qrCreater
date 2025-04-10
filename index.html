@@ -42,9 +42,7 @@
       .portrait .qr-container { width: 80%; }
       
       /* 体格表エリア */
-      .table-container {
-        max-width: 700px;
-      }
+      .table-container { max-width: 700px; }
       .table-container h2 {
         text-align: center;
         font-size: 25px;
@@ -68,7 +66,7 @@
       
       /* ダイアログ内テーブル用 */
       #dialogTableArea {
-        overflow-x: auto;  /* 横スクロール対応追加 */
+        overflow-x: auto; /* 横スクロール対応追加 */
       }
       #dialogTableArea table {
         width: 100%;
@@ -595,6 +593,11 @@
     
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
     <script>
+      // ■ 修正：グローバル変数 globalSelection を初期化
+      var globalSelection = {};
+      // ■ 修正：体格表ダイアログ要素 tableDialog を取得
+      const tableDialog = document.getElementById('tableDialog');
+      
       /* --- 既存のQRコード生成、履歴、保存処理 --- */
       const historyList = document.getElementById('history-list');
       const qrCanvas = document.getElementById('qr-code-canvas');
@@ -638,9 +641,7 @@
       
       // 各既存 infoGroup 内の備考セレクトにイベントリスナーを設定
       document.querySelectorAll('.infoGroup .featureSelect').forEach(select => {
-        select.addEventListener('change', function() {
-          updateFeatureOtherInput(this);
-        });
+        select.addEventListener('change', function() { updateFeatureOtherInput(this); });
       });
       
       // 「＋二体目以降の情報を追加」ボタン処理
@@ -659,9 +660,7 @@
         label.textContent = count + "体目";
         // 各備考セレクトの表示制御を再設定
         newGroup.querySelectorAll('.featureSelect').forEach(sel => {
-          sel.addEventListener('change', function() {
-            updateFeatureOtherInput(this);
-          });
+          sel.addEventListener('change', function() { updateFeatureOtherInput(this); });
           updateFeatureOtherInput(sel);
         });
         // 末尾に追加
@@ -726,9 +725,8 @@
           `<span class="history-text">${qrString}</span><img src="${qrData}" class="qr-code">`;
         listItem.addEventListener('click', () => {
           // 履歴から再表示する際も width オプションと誤り訂正レベル L を適用
-          QRCode.toCanvas(qrCanvas, qrCodeText, { errorCorrectionLevel: 'L', width: qrSize }, function (error) {
-            if (error) console.error(error);
-          });
+          QRCode.toCanvas(qrCanvas, qrCodeText, { errorCorrectionLevel: 'L', width: qrSize },
+            function (error) { if (error) console.error(error); });
           const num = qrString.replace('・生成No.', '');
           qrTextDisplay.textContent = `生成回数：${num}`;
         });
@@ -762,14 +760,14 @@
           allGroupTexts.push(groupText);
         });
         
-        // 各グループごとのテキストは、グループ間を "\n" で連結して改行を確実にする
+        // 各グループごとに必ず改行を入れる（グループ間は "\n" で連結）
         const text = allGroupTexts.join("\n");
         
-        // maxChars を QRコードの横幅を基準に決定（例：幅（ピクセル）をおおよそ文字幅 16px で割る）
+        // 最大文字数をQRコードの横幅に合わせて決定（例：文字幅を約16pxと仮定）
         const maxChars = Math.floor(qrCanvas.width / 16);
-        // 改行を既存の改行文字ごとに保ったまま、各行を必要なら折り返す
+        // 改行を既存の改行を保持したまま、各行を必要なら折り返す関数を利用
         let wrappedLines = wrapTextPreserveNewlines(text, maxChars);
-        // 行間は（例として）25pxに設定
+        // 行間は 25px で表示（必要に応じて調整）
         const lineHeight = 25;
         const textAreaHeight = wrappedLines.length * lineHeight;
         const combinedCanvas = document.createElement('canvas');
@@ -840,7 +838,6 @@
       // 改行を既存の改行を保持したまま、各行を最大文字数を基準に折り返す関数
       function wrapTextPreserveNewlines(text, maxChars) {
         let finalLines = [];
-        // 改行コード "\n" で分割
         const lines = text.split("\n");
         lines.forEach(line => {
           if (line.length > maxChars) {
@@ -865,9 +862,7 @@
               break;
             }
           }
-          if (breakPos === -1) { 
-            breakPos = maxChars; 
-          }
+          if (breakPos === -1) { breakPos = maxChars; }
           lines.push(text.substring(0, breakPos).trim());
           text = text.substring(breakPos).trim();
         }
@@ -977,9 +972,7 @@
       cancelBtn.addEventListener('click', hideSaveDialog);
       document.getElementById('regenerate-btn').addEventListener('click', generateQRCode);
       saveBtnMobile.addEventListener('click', showSaveDialog);
-      if (tableBtn) {
-        tableBtn.addEventListener('click', showTableDialog);
-      }
+      if (tableBtn) { tableBtn.addEventListener('click', showTableDialog); }
       
       window.addEventListener('keydown', function (e) {
         const activeTag = document.activeElement.tagName;
@@ -1001,176 +994,23 @@
       
       /* --- 体格表データとPC版テーブル生成 --- */
       const antennaData = [
-        {
-          antenna: "アンテナ無",
-          "回避0最大": "40",
-          "回避3+最大": "37",
-          "回避3-最大": "34",
-          "回避0最速": "29",
-          "回避3+最速": "26",
-          "回避3-最速": "24",
-          "備考": ""
-        },
-        {
-          antenna: "単体攻撃",
-          "回避0最大": "33",
-          "回避3+最大": "31",
-          "回避3-最大": "29",
-          "回避0最速": "24",
-          "回避3+最速": "22",
-          "回避3-最速": "20",
-          "備考": "火水:HP+1<br>風光:回避+1"
-        },
-        {
-          antenna: "3体攻撃",
-          "回避0最大": "35",
-          "回避3+最大": "33",
-          "回避3-最大": "30",
-          "回避0最速": "26",
-          "回避3+最速": "23",
-          "回避3-最大": "21",
-          "備考": "火水:HP+1<br>風光:回避+1"
-        },
-        {
-          antenna: "ノクダ",
-          "回避0最大": "38",
-          "回避3+最大": "36",
-          "回避3-最大": "33",
-          "回避0最速": "28",
-          "回避3+最速": "26",
-          "回避3-最速": "23",
-          "備考": "回避+1"
-        },
-        {
-          antenna: "単体回復",
-          "回避0最大": "41",
-          "回避3+最大": "39",
-          "回避3-最大": "36",
-          "回避0最速": "31",
-          "回避3+最速": "28",
-          "回避3-最速": "26",
-          "備考": ""
-        },
-        {
-          antenna: "単体復活",
-          "回避0最大": "42",
-          "回避3+最大": "40",
-          "回避3-最大": "37",
-          "回避0最速": "32",
-          "回避3+最速": "30",
-          "回避3-最速": "27",
-          "備考": ""
-        },
-        {
-          antenna: "痺れ取る",
-          "回避0最大": "43",
-          "回避3+最大": "41",
-          "回避3-最大": "38",
-          "回避0最速": "33",
-          "回避3+最速": "31",
-          "回避3-最速": "28",
-          "備考": ""
-        },
-        {
-          antenna: "目覚める",
-          "回避0最大": "43",
-          "回避3+最大": "40",
-          "回避3-最大": "38",
-          "回避0最速": "33",
-          "回避3+最速": "30",
-          "回避3-最速": "27",
-          "備考": ""
-        },
-        {
-          antenna: "解毒",
-          "回避0最大": "42",
-          "回避3+最大": "39",
-          "回避3-最大": "37",
-          "回避0最速": "32",
-          "回避3+最速": "29",
-          "回避3-最速": "26",
-          "備考": ""
-        },
-        {
-          antenna: "属性治す",
-          "回避0最大": "42",
-          "回避3+最大": "40",
-          "回避3-最大": "37",
-          "回避0最速": "32",
-          "回避3+最速": "29",
-          "回避3-最速": "27",
-          "備考": ""
-        },
-        {
-          antenna: "全部治す",
-          "回避0最大": "42",
-          "回避3+最大": "40",
-          "回避3-最大": "37",
-          "回避0最速": "32",
-          "回避3+最速": "30",
-          "回避3-最速": "27",
-          "備考": ""
-        },
-        {
-          antenna: "単体増強",
-          "回避0最大": "36",
-          "回避3+最大": "34",
-          "回避3-最大": "32",
-          "回避0最速": "27",
-          "回避3+最速": "25",
-          "回避3-最速": "23",
-          "備考": "かわしやすい<br>:回避+2"
-        },
-        {
-          antenna: "蓄える",
-          "回避0最大": "42",
-          "回避3+最大": "39",
-          "回避3-最大": "37",
-          "回避0最速": "32",
-          "回避3+最速": "30",
-          "回避3-最速": "27",
-          "備考": ""
-        },
-        {
-          antenna: "興奮",
-          "回避0最大": "37",
-          "回避3+最大": "35",
-          "回避3-最大": "32",
-          "回避0最速": "27",
-          "回避3+最速": "25",
-          "回避3-最速": "22",
-          "備考": ""
-        },
-        {
-          antenna: "弱体系",
-          "回避0最大": "37",
-          "回避3+最大": "35",
-          "回避3-最大": "32",
-          "回避0最速": "27",
-          "回避3+最速": "25",
-          "回避3-最速": "22",
-          "備考": "皆かわしにくい<br>:回避+4"
-        },
-        {
-          antenna: "無敵",
-          "回避0最大": "42",
-          "回避3+最大": "40",
-          "回避3-最大": "37",
-          "回避0最速": "32",
-          "回避3+最速": "30",
-          "回避3-最速": "27",
-          "備考": ""
-        },
-        {
-          antenna: "足元ガード",
-          "回避0最大": "35",
-          "回避3+最大": "32",
-          "回避3-最大": "30",
-          "回避0最速": "25",
-          "回避3+最速": "22",
-          "回避3-最速": "20",
-          "備考": "回避+1"
-        }
+        { antenna: "アンテナ無", "回避0最大": "40", "回避3+最大": "37", "回避3-最大": "34", "回避0最速": "29", "回避3+最速": "26", "回避3-最速": "24", "備考": "" },
+        { antenna: "単体攻撃", "回避0最大": "33", "回避3+最大": "31", "回避3-最大": "29", "回避0最速": "24", "回避3+最速": "22", "回避3-最速": "20", "備考": "火水:HP+1<br>風光:回避+1" },
+        { antenna: "3体攻撃", "回避0最大": "35", "回避3+最大": "33", "回避3-最大": "30", "回避0最速": "26", "回避3+最速": "23", "回避3-最速": "21", "備考": "火水:HP+1<br>風光:回避+1" },
+        { antenna: "ノクダ", "回避0最大": "38", "回避3+最大": "36", "回避3-最大": "33", "回避0最速": "28", "回避3+最速": "26", "回避3-最速": "23", "備考": "回避+1" },
+        { antenna: "単体回復", "回避0最大": "41", "回避3+最大": "39", "回避3-最大": "36", "回避0最速": "31", "回避3+最速": "28", "回避3-最速": "26", "備考": "" },
+        { antenna: "単体復活", "回避0最大": "42", "回避3+最大": "40", "回避3-最大": "37", "回避0最速": "32", "回避3+最速": "30", "回避3-最速": "27", "備考": "" },
+        { antenna: "痺れ取る", "回避0最大": "43", "回避3+最大": "41", "回避3-最大": "38", "回避0最速": "33", "回避3+最速": "31", "回避3-最速": "28", "備考": "" },
+        { antenna: "目覚める", "回避0最大": "43", "回避3+最大": "40", "回避3-最大": "38", "回避0最速": "33", "回避3+最速": "30", "回避3-最速": "27", "備考": "" },
+        { antenna: "解毒", "回避0最大": "42", "回避3+最大": "39", "回避3-最大": "37", "回避0最速": "32", "回避3+最速": "29", "回避3-最速": "26", "備考": "" },
+        { antenna: "属性治す", "回避0最大": "42", "回避3+最大": "40", "回避3-最大": "37", "回避0最速": "32", "回避3+最速": "29", "回避3-最速": "27", "備考": "" },
+        { antenna: "全部治す", "回避0最大": "42", "回避3+最大": "40", "回避3-最大": "37", "回避0最速": "32", "回避3+最速": "30", "回避3-最速": "27", "備考": "" },
+        { antenna: "単体増強", "回避0最大": "36", "回避3+最大": "34", "回避3-最大": "32", "回避0最速": "27", "回避3+最速": "25", "回避3-最速": "23", "備考": "かわしやすい<br>:回避+2" },
+        { antenna: "蓄える", "回避0最大": "42", "回避3+最大": "39", "回避3-最大": "37", "回避0最速": "32", "回避3+最速": "30", "回避3-最速": "27", "備考": "" },
+        { antenna: "興奮", "回避0最大": "37", "回避3+最大": "35", "回避3-最大": "32", "回避0最速": "27", "回避3+最速": "25", "回避3-最速": "22", "備考": "" },
+        { antenna: "弱体系", "回避0最大": "37", "回避3+最大": "35", "回避3-最大": "32", "回避0最速": "27", "回避3+最速": "25", "回避3-最速": "22", "備考": "皆かわしにくい<br>:回避+4" },
+        { antenna: "無敵", "回避0最大": "42", "回避3+最大": "40", "回避3-最大": "37", "回避0最速": "32", "回避3+最速": "30", "回避3-最速": "27", "備考": "" },
+        { antenna: "足元ガード", "回避0最大": "35", "回避3+最大": "32", "回避3-最大": "30", "回避0最速": "25", "回避3+最速": "22", "回避3-最速": "20", "備考": "回避+1" }
       ];
       
       // ヘッダー用フォーマット関数
