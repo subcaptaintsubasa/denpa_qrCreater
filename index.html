@@ -5,9 +5,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-HCW9PSXFWH"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
+      function gtag() { dataLayer.push(arguments); }
       gtag('js', new Date());
       gtag('config', 'G-HCW9PSXFWH');
     </script>
@@ -30,40 +28,18 @@
       }
       
       /* --- Desktop 表示 --- */
-      .desktop .table-container {
-        order: 1;
-        width: 40%;
-      }
-      .desktop .qr-container {
-        order: 2;
-        width: 48%;
-      }
-      .desktop .history {
-        order: 3;
-        width: 12%;
-      }
+      .desktop .table-container { order: 1; width: 40%; }
+      .desktop .qr-container { order: 2; width: 48%; }
+      .desktop .history { order: 3; width: 12%; }
       
       /* --- タブレット 横画面 --- */
-      .tablet.landscape .table-container {
-        order: 1;
-        width: 50%;
-      }
-      .tablet.landscape .qr-container {
-        order: 2;
-        width: 50%;
-      }
-      .tablet.landscape .history {
-        order: 3;
-        width: 100%;
-      }
+      .tablet.landscape .table-container { order: 1; width: 50%; }
+      .tablet.landscape .qr-container { order: 2; width: 50%; }
+      .tablet.landscape .history { order: 3; width: 100%; }
       
       /* スマホ・タブレット 縦画面（portrait）は従来通り：体格表は非表示（ダイアログで表示） */
-      .portrait .table-container {
-        display: none;
-      }
-      .portrait .qr-container {
-        width: 80%;
-      }
+      .portrait .table-container { display: none; }
+      .portrait .qr-container { width: 80%; }
       
       /* 体格表エリア */
       .table-container {
@@ -76,9 +52,7 @@
       }
       
       /* 表内コンテナ：横スクロール対応＋罫線設定 */
-      #antennaTableContainer {
-        overflow-x: auto;
-      }
+      #antennaTableContainer { overflow-x: auto; }
       #antennaTableContainer table {
         width: 100%;
         border-collapse: collapse;
@@ -93,6 +67,9 @@
       }
       
       /* ダイアログ内テーブル用 */
+      #dialogTableArea {
+        overflow-x: auto;  /* 横スクロール対応追加 */
+      }
       #dialogTableArea table {
         width: 100%;
         border-collapse: collapse;
@@ -108,13 +85,9 @@
       
       /* ヘッダーセルの固定幅 */
       #antennaTableContainer th.antenna,
-      #dialogTableArea th.antenna {
-        min-width: 5ch;
-      }
+      #dialogTableArea th.antenna { min-width: 5ch; }
       #antennaTableContainer th.data,
-      #dialogTableArea th.data {
-        min-width: 4ch;
-      }
+      #dialogTableArea th.data { min-width: 4ch; }
       
       /* QRコンテナ */
       .qr-container {
@@ -142,33 +115,20 @@
       }
       
       /* 選択情報グループのコンテナ */
-      #infoGroupsContainer {
-        margin-top: 0px;
-      }
+      #infoGroupsContainer { margin-top: 0px; }
       .infoGroup {
         border: 1px solid #ccc;
         padding: 3px;
         margin-bottom: 1px;
       }
       /* グループラベルは各グループの上部に配置 */
-      .groupLabel {
-        font-weight: bold;
-        margin-bottom: 1px;
-      }
+      .groupLabel { font-weight: bold; margin-bottom: 1px; }
       /* 各選択項目は横並び */
-      .infoGroup > div {
-        display: inline-block;
-        margin-right: 10px;
-      }
+      .infoGroup > div { display: inline-block; margin-right: 10px; }
       
       /* 名前入力欄 */
-      .nameContainer {
-        margin-top: 3px;
-      }
-      .nameContainer input {
-        padding: 2px;
-        font-size: 12px;
-      }
+      .nameContainer { margin-top: 3px; }
+      .nameContainer input { padding: 2px; font-size: 12px; }
       
       /* 「＋二体目以降の情報を追加」「リセット」ボタン */
       #addInfoGroupBtn, #resetInfoGroupsBtn {
@@ -177,9 +137,7 @@
         padding: 2px 10px;
         cursor: pointer;
       }
-      #resetInfoGroupsBtn {
-        margin-left: 10px;
-      }
+      #resetInfoGroupsBtn { margin-left: 10px; }
       
       /* チェックボックスエリア：体格表下部に縦並び */
       #columnOptions {
@@ -188,9 +146,7 @@
         gap: 10px;
         max-width: 700px;
       }
-      #columnOptions div {
-        width: calc(100% / 4 - 10px);
-      }
+      #columnOptions div { width: calc(100% / 4 - 10px); }
       
       /* 履歴エリア（背景色：限りなく白に近いグレー） */
       .history {
@@ -200,10 +156,7 @@
         box-sizing: border-box;
         background-color: #f9f9f9;
       }
-      .history p {
-        font-weight: bold;
-        text-align: center;
-      }
+      .history p { font-weight: bold; text-align: center; }
       .history ul {
         list-style-type: none;
         padding: 0;
@@ -270,9 +223,7 @@
       }
       
       /* Desktop：体格表ボタン非表示 */
-      .desktop #table-btn {
-        display: none;
-      }
+      .desktop #table-btn { display: none; }
       
       /* ダイアログ（保存用、体格表用、データ選択用） */
       .dialog-container {
@@ -324,27 +275,15 @@
         cursor: pointer;
         margin-right: 2%;
       }
-      .dialog-container button:hover {
-        background-color: #45a049;
-      }
+      .dialog-container button:hover { background-color: #45a049; }
       .dialog-container .cancel-btn {
         background-color: #f44336;
       }
-      .dialog-container .cancel-btn:hover {
-        background-color: #e53935;
-      }
+      .dialog-container .cancel-btn:hover { background-color: #e53935; }
       
-      .title-large {
-        font-size: 30px;
-        font-weight: bold;
-      }
-      .title-medium {
-        font-size: 23px;
-        font-weight: bold;
-      }
-      .title-small {
-        font-size: 12px;
-      }
+      .title-large { font-size: 30px; font-weight: bold; }
+      .title-medium { font-size: 23px; font-weight: bold; }
+      .title-small { font-size: 12px; }
       
       /* オーバーレイ */
       #overlay {
@@ -548,7 +487,7 @@
               <option value="目隠し">目隠し</option>
               <option value="痺れされる">痺れされる</option>
               <option value="眠らせる">眠らせる</option>
-              <option value="速くなれ">早くなれ</option>
+              <option value="速くなれ">速くなれ</option>
               <option value="強くなれ">強くなれ</option>
               <option value="硬くなれ">硬くなれ</option>
               <option value="かわしやすい">かわしやすい</option>
@@ -602,7 +541,6 @@
       <button id="resetInfoGroupsBtn">入力情報のリセット</button>
       
       <div class="explanation">
-
           </a>
         </p>
       </div>
@@ -819,24 +757,27 @@
           if (feature) parts.push(feature);
           const name = group.querySelector('.nameInput') ? group.querySelector('.nameInput').value : "";
           if (name) parts.push(name);
-          // 各グループは別行とする
+          // 各グループごとにテキストを作成（必ず1グループ＝1行になるように）
           let groupText = parts.join(" ");
-          // グループ内で "回避" の前に改行を入れる
-          groupText = groupText.replace(/(回避)/g, "\n$1");
           allGroupTexts.push(groupText);
         });
         
+        // 各グループごとのテキストは、グループ間を "\n" で連結して改行を確実にする
         const text = allGroupTexts.join("\n");
         
-        let wrappedLines = text ? wrapText(text, 12) : [];
-        const lineHeight = 30;
+        // maxChars を QRコードの横幅を基準に決定（例：幅（ピクセル）をおおよそ文字幅 16px で割る）
+        const maxChars = Math.floor(qrCanvas.width / 16);
+        // 改行を既存の改行文字ごとに保ったまま、各行を必要なら折り返す
+        let wrappedLines = wrapTextPreserveNewlines(text, maxChars);
+        // 行間は（例として）25pxに設定
+        const lineHeight = 25;
         const textAreaHeight = wrappedLines.length * lineHeight;
         const combinedCanvas = document.createElement('canvas');
         combinedCanvas.width = qrCanvas.width;
         combinedCanvas.height = qrCanvas.height + textAreaHeight;
         const combinedCtx = combinedCanvas.getContext('2d');
       
-        if (text) {
+        if (wrappedLines.length > 0) {
           combinedCtx.fillStyle = 'white';
           combinedCtx.fillRect(0, 0, combinedCanvas.width, textAreaHeight);
           combinedCtx.fillStyle = 'black';
@@ -896,7 +837,23 @@
         }
       }
       
-      function wrapText(text, maxChars = 12) {
+      // 改行を既存の改行を保持したまま、各行を最大文字数を基準に折り返す関数
+      function wrapTextPreserveNewlines(text, maxChars) {
+        let finalLines = [];
+        // 改行コード "\n" で分割
+        const lines = text.split("\n");
+        lines.forEach(line => {
+          if (line.length > maxChars) {
+            finalLines = finalLines.concat(wrapText(line, maxChars));
+          } else {
+            finalLines.push(line);
+          }
+        });
+        return finalLines;
+      }
+      
+      // 従来の wrapText 関数
+      function wrapText(text, maxChars) {
         let lines = [];
         while (text.length > maxChars) {
           let breakPos = -1;
@@ -1231,21 +1188,15 @@
         const container = document.getElementById("antennaTableContainer");
         const checkboxes = document.querySelectorAll("#columnOptions input[type=checkbox]");
         let selectedColumns = [];
-        checkboxes.forEach(chk => {
-          if (chk.checked) selectedColumns.push(chk.value);
-        });
+        checkboxes.forEach(chk => { if (chk.checked) selectedColumns.push(chk.value); });
         
         let html = "<table><thead><tr><th class='antenna' style='min-width:5ch;'>アンテナ</th>";
-        selectedColumns.forEach(col => {
-          html += "<th class='data' style='min-width:4ch;'>" + formatHeader(col) + "</th>";
-        });
+        selectedColumns.forEach(col => { html += "<th class='data' style='min-width:4ch;'>" + formatHeader(col) + "</th>"; });
         html += "</tr></thead><tbody>";
         
         antennaData.forEach(row => {
           html += "<tr><td class='antenna'>" + row.antenna + "</td>";
-          selectedColumns.forEach(col => {
-            html += "<td class='data'>" + row[col] + "</td>";
-          });
+          selectedColumns.forEach(col => { html += "<td class='data'>" + row[col] + "</td>"; });
           html += "</tr>";
         });
         
@@ -1253,9 +1204,7 @@
         container.innerHTML = html;
       }
       
-      document.querySelectorAll("#columnOptions input[type=checkbox]").forEach(chk => {
-        chk.addEventListener("change", renderAntennaTable);
-      });
+      document.querySelectorAll("#columnOptions input[type=checkbox]").forEach(chk => { chk.addEventListener("change", renderAntennaTable); });
       
       renderAntennaTable();
     </script>
