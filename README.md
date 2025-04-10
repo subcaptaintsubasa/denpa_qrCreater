@@ -1,7 +1,7 @@
 ## 電波人間用QRコード生成ツール
 -  URL：　[https://subcaptaintsubasa.github.io/denpa_qrCreater/](https://subcaptaintsubasa.github.io/denpa_qrCreater/)
 - ランダムな256の文字列を生成し、QRコードに変換するツールです。
-- スマホ版電波人間におけるQRキャッチでの個体厳選及びQRコードの共有作業を効率化します。
+- スマホ版「New 電波人間のRPG Free!」におけるQRキャッチでの個体厳選及びQRコードの共有作業を効率化します。
 - iOS・Androidどちらでも同じ電波人間が出現します。
 - ~（コードを編集したい場合）文字列の長さを127以上にすると、iOSとAndroidで出現する電波人間が異なります。~ <br>＊4月7日追記　電波人間のアプリ側のアップデートにより、文字列の長さに関わらず、OS間で出現個体が統一されるようになりました。
 
