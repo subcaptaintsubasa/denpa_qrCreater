@@ -593,9 +593,14 @@
     
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
     <script>
-      // ■ 修正：グローバル変数 globalSelection を初期化
+      // ■ グローバル変数の初期化
       var globalSelection = {};
-      // ■ 修正：体格表ダイアログ要素 tableDialog を取得
+      // ■ 初期状態のチェックボックスの状態を globalSelection に設定
+      document.querySelectorAll("#columnOptions input[type='checkbox']").forEach(chk => {
+        globalSelection[chk.value] = chk.checked;
+      });
+      
+      // ■ tableDialog 要素を取得
       const tableDialog = document.getElementById('tableDialog');
       
       /* --- 既存のQRコード生成、履歴、保存処理 --- */
@@ -760,10 +765,10 @@
           allGroupTexts.push(groupText);
         });
         
-        // 各グループごとに必ず改行を入れる（グループ間は "\n" で連結）
+        // 各グループごとのテキストは、グループ間を "\n" で連結して改行を確実にする
         const text = allGroupTexts.join("\n");
         
-        // 最大文字数をQRコードの横幅に合わせて決定（例：文字幅を約16pxと仮定）
+        // 最大文字数をQRコードの横幅に合わせて決定（仮に文字幅を約16pxとする）
         const maxChars = Math.floor(qrCanvas.width / 16);
         // 改行を既存の改行を保持したまま、各行を必要なら折り返す関数を利用
         let wrappedLines = wrapTextPreserveNewlines(text, maxChars);
